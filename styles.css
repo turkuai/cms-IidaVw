@@ -9,17 +9,16 @@
 
 /* Style for the App Bar */
 .app-bar {
-    background-color: #333; /* Dark background color */
+    background-color: #fd7d7d; /* Dark background color */
     color: white;            /* Text color */
     display: flex;
-    justify-content: space-between; /* Space out items */
-    align-items: center;
-    padding: 10px 20px;      /* Padding for top/bottom and left/right */
+    align-items: center;     /* Align items vertically */
+    padding: 30px 20px;      /* Padding for top/bottom and left/right */
 }
 
 /* Logo styling */
 .app-bar .logo h1 {
-    font-size: 24px;
+    font-size: 34px;
     font-weight: bold;
     margin: 0;
 }
@@ -28,23 +27,24 @@
 .nav-links ul {
     list-style: none;
     display: flex;
+    margin-left: 20px;  /* Adds space between the logo and links */
 }
 
 .nav-links li {
-    margin-left: 20px;
+    margin-left: 20px;  /* Space between links */
 }
 
 .nav-links a {
     text-decoration: none;
     color: white;
-    font-size: 16px;
+    font-size: 24px;
     padding: 8px 12px;
     border-radius: 4px;
 }
 
 /* Hover effect for links */
 .nav-links a:hover {
-    background-color: #575757; /* Darker background on hover */
+    background-color: #c75454; /* Darker background on hover */
 }
 
 /* Responsive design */
