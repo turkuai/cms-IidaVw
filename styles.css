@@ -1,11 +1,65 @@
 /* styles.css */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
+
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-h1 {
-    color: #ff6347;
-    text-align: center;
+/* Style for the App Bar */
+.app-bar {
+    background-color: #333; /* Dark background color */
+    color: white;            /* Text color */
+    display: flex;
+    justify-content: space-between; /* Space out items */
+    align-items: center;
+    padding: 10px 20px;      /* Padding for top/bottom and left/right */
+}
+
+/* Logo styling */
+.app-bar .logo h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Navigation Bar */
+.nav-links ul {
+    list-style: none;
+    display: flex;
+}
+
+.nav-links li {
+    margin-left: 20px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+/* Hover effect for links */
+.nav-links a:hover {
+    background-color: #575757; /* Darker background on hover */
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .app-bar {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .nav-links ul {
+        flex-direction: column;
+        margin-top: 10px;
+    }
+
+    .nav-links li {
+        margin: 5px 0;
+    }
 }
