@@ -1,5 +1,3 @@
-/* styles.css */
-
 /* Basic Reset */
 * {
     margin: 0;
@@ -47,19 +45,34 @@
     background-color: #c75454; /* Darker background on hover */
 }
 
-/* Responsive design */
+/* New Section Styling (Text + Image) */
+.content-section {
+    display: flex;  /* Use flexbox to align text and image side by side */
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px;
+    margin-top: 20px;
+}
+
+.content-section .text {
+    flex: 1;  /* Allow the text to take up the available space */
+    margin-right: 20px; /* Add some space between the text and image */
+}
+
+.content-section .image img {
+    max-width: 100%; /* Ensure the image doesn't overflow */
+    height: auto;
+    border-radius: 8px; /* Optional: adds rounded corners to the image */
+}
+
+/* Responsive Design for smaller screens */
 @media (max-width: 768px) {
-    .app-bar {
-        flex-direction: column;
+    .content-section {
+        flex-direction: column;  /* Stack the text and image vertically */
         text-align: center;
     }
 
-    .nav-links ul {
-        flex-direction: column;
-        margin-top: 10px;
-    }
-
-    .nav-links li {
-        margin: 5px 0;
+    .content-section .image {
+        margin-top: 20px; /* Add space between the text and image when stacked */
     }
 }
