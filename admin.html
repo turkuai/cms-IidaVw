@@ -10,7 +10,8 @@
 
   <div class="app-bar">
     <div class="logo">
-      <h1 id="logoText">LOGO</h1>
+      <h1 class="editable" id="logoText">LOGO</h1>
+      <button onclick="editLogo()">Edit</button>
     </div>
     <nav class="nav-links">
       <ul>
@@ -25,7 +26,6 @@
     <section class="article">
       <div class="article-text">
         <h2>Meet Sunny – A Golden Ray of Joy!</h2>
-
         <p>
             <strong>Name:</strong> Sunny<br>
             <strong>Breed:</strong> Golden Retriever<br>
@@ -33,10 +33,7 @@
             <strong>Age:</strong> 4 months<br>
             <strong>Gender:</strong> Female
           </p>
-
-          <br>
-
-        <p>
+          <p>
             Sunny is a playful and affectionate Golden Retriever puppy with a heart full of love and endless puppy energy. 
             She loves chasing balls, making new friends, and cuddling up for naps after playtime.
           </p>
@@ -52,22 +49,18 @@
             Sunny is up to date on her vaccinations and is learning fast with house training.
           </p>
 
-          <br>
-
           <p>
             👉 Think Sunny might be your perfect match? Apply now to adopt and give her the loving home she deserves!
           </p>
-
       </div>
       <div class="article-image">
         <img src="images/dog1.jpg" alt="Cute dog">
       </div>
     </section>
-  
+
     <section class="article">
       <div class="article-text">
         <h2>Meet Pumpkin – Your Future Furry Friend!</h2>
-
         <p>
             <strong>Name:</strong> Pumpkin<br>
             <strong>Breed:</strong> Domestic Longhair<br>
@@ -75,10 +68,7 @@
             <strong>Age:</strong> 3 years<br>
             <strong>Gender:</strong> Male
           </p>
-
-          <br>
-
-        <p>
+          <p>
             Pumpkin is a sweet and curious orange cat with striking green eyes and a fluffy coat. 
             He loves to lounge on soft rugs and quietly observe the world around him.
           </p>
@@ -92,35 +82,101 @@
             Pumpkin is neutered, vaccinated, and litter trained—ready to join his forever family!
           </p>
 
-          <br>
-
           <p>
             👉 Ready to adopt Pumpkin? Fill out an application on our website and give this lovable cat the home he deserves.
           </p>
-
       </div>
       <div class="article-image">
         <img src="images/cat1.jpg" alt="Cute dog">
       </div>
     </section>
   </main>
-  
 
   <footer class="footer">
     <div class="footer-left">
-      <h3 id="footer-title">Your company's name</h3>
-      <p id="footer-note">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-      <p>&copy; 2024, Company's name. All rights reserved.</p>
+      <h1 class="editable" id="footer-title">Your Company's Footer Title</h1>
+      <button onclick="editFooter()">Edit</button>
+      <p class="editable" id="footer-note">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+      <p>© 2024, <span id="company-rights">Company's name</span>. All rights reserved.</p>
     </div>
     <div class="footer-right">
       <div id="linksContainer">
-        <!-- Links will be dynamically added here -->
+        <!-- Links will be populated here -->
       </div>
+      <button onclick="addLink()">➕ Add New Link</button>
     </div>
   </footer>
 
   <script>
-    // Lataa tallennetut tiedot
+    // Logo and footer editing functions
+    function editLogo() {
+      const logo = document.getElementById('logoText');
+      const newLogoText = prompt("Muokkaa logo-tekstiä", logo.textContent);
+      if (newLogoText) {
+        logo.textContent = newLogoText;
+        localStorage.setItem('logoText', newLogoText);
+      }
+    }
+
+    function editFooter() {
+      const footerTitle = document.getElementById('footer-title');
+      const newFooterTitle = prompt("Muokkaa footerin otsikkoa", footerTitle.textContent);
+      if (newFooterTitle) {
+        footerTitle.textContent = newFooterTitle;
+        localStorage.setItem('footerTitle', newFooterTitle);
+      }
+    }
+
+    // Social media link management functions
+    function loadLinks() {
+      const linksContainer = document.getElementById('linksContainer');
+      const storedLinks = JSON.parse(localStorage.getItem('socialLinks') || '[]');
+      linksContainer.innerHTML = '';
+      storedLinks.forEach((link, index) => {
+        const div = document.createElement('div');
+        div.className = 'link-row';
+        div.innerHTML = `
+          <a href="${link.url}" target="_blank" style="color: blue;">${link.text}</a>
+          <button onclick="removeLink(${index})">➖</button>
+        `;
+        linksContainer.appendChild(div);
+      });
+    }
+
+    function addLink() {
+      const linksContainer = document.getElementById('linksContainer');
+      const newLinkRow = document.createElement('div');
+      newLinkRow.className = 'link-row';
+      newLinkRow.innerHTML = `
+        <input type="text" placeholder="Linkin nimi">
+        <input type="text" placeholder="Linkin URL">
+        <button onclick="saveNewLink(this)">➕</button>
+      `;
+      linksContainer.appendChild(newLinkRow);
+    }
+
+    function removeLink(index) {
+      const links = JSON.parse(localStorage.getItem('socialLinks') || '[]');
+      links.splice(index, 1);
+      localStorage.setItem('socialLinks', JSON.stringify(links));
+      loadLinks();  // Refresh the displayed links
+    }
+
+    function saveNewLink(button) {
+      const linkRow = button.parentElement;
+      const inputs = linkRow.querySelectorAll('input');
+      const newLink = {
+        text: inputs[0].value,
+        url: inputs[1].value
+      };
+
+      const links = JSON.parse(localStorage.getItem('socialLinks') || '[]');
+      links.push(newLink);
+      localStorage.setItem('socialLinks', JSON.stringify(links));
+      loadLinks();  // Refresh the displayed links
+    }
+
+    // Load saved data when the page loads
     window.addEventListener('DOMContentLoaded', () => {
       const storedLogo = localStorage.getItem('logoText');
       if (storedLogo) {
@@ -132,26 +188,8 @@
         document.getElementById('footer-title').textContent = storedFooterTitle;
       }
 
-      const storedFooterNote = localStorage.getItem('footerNote');
-      if (storedFooterNote) {
-        document.getElementById('footer-note').textContent = storedFooterNote;
-      }
-
-      loadLinks();  // Lataa ja näytä linkit
+      loadLinks();  // Load and display links
     });
-
-    // Lataa ja näyttää linkit
-    function loadLinks() {
-      const linksContainer = document.getElementById('linksContainer');
-      const storedLinks = JSON.parse(localStorage.getItem('socialLinks') || '[]');
-      linksContainer.innerHTML = '';
-      storedLinks.forEach(link => {
-        const div = document.createElement('div');
-        div.className = 'link-row';
-        div.innerHTML = `<a href="${link.url}" target="_blank" style="color: blue;">${link.text}</a>`;
-        linksContainer.appendChild(div);
-      });
-    }
   </script>
 
 </body>
