@@ -118,8 +118,9 @@
 .footer-right {
     flex: 1;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end; /* Align links to the right */
     gap: 40px;
+    flex-direction: column; /* Align links vertically */
 }
 
 .footer-right a {
@@ -127,6 +128,108 @@
     text-decoration: none;
     display: inline-block;
     margin-bottom: 6px;
+}
+
+.footer-right a:hover {
+    color: #fd7d7d;
+    text-decoration: underline;
+}
+
+/* Footer */
+.footer {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f3f3f3;
+    padding: 30px;
+    border-top: 2px solid #ccc;
+    flex-wrap: wrap;
+}
+
+.footer-left {
+    flex: 1;
+    max-width: 40%;
+}
+
+.footer-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end; /* Align links to the right */
+    gap: 40px;
+    flex-direction: column; /* Align links vertically */
+    padding-right: 20px; /* Add space between links and right edge */
+}
+
+.footer-right a {
+    color: blue;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 6px;
+}
+
+.footer-right a:hover {
+    color: #fd7d7d;
+    text-decoration: underline;
+}
+
+/* Footer Layout */
+.footer {
+    display: flex;
+    justify-content: space-between;  /* Space out left, center, and right sections */
+    padding: 20px;
+    background-color: #f1f1f1;
+    border-top: 2px solid #ccc;
+    flex-wrap: wrap;
+}
+
+/* Left Section of Footer */
+.footer-left {
+    flex: 1;
+    max-width: 40%;
+}
+
+/* Center Section of Footer (New Links) */
+.footer-center {
+    flex: 1;
+    text-align: center;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;  /* Stack links vertically */
+    align-items: center;  /* Center align the links */
+    gap: 10px;  /* Space between each link */
+}
+
+.footer-links li {
+    font-size: 16px;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: blue;
+}
+
+.footer-links a:hover {
+    color: #fd7d7d;
+    text-decoration: underline;
+}
+
+/* Right Section of Footer (Social Links) */
+.footer-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.footer-right a {
+    text-decoration: none;
+    color: blue;
+    font-size: 16px;
 }
 
 .footer-right a:hover {

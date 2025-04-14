@@ -94,16 +94,27 @@
 
   <footer class="footer">
     <div class="footer-left">
-      <h1 class="editable" id="footer-title">Your Company's Footer Title</h1>
-      <button onclick="editFooter()">Edit</button>
-      <p class="editable" id="footer-note">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-      <p>© 2024, <span id="company-rights">Company's name</span>. All rights reserved.</p>
+        <h1 class="editable" id="footer-title">Your Company's Footer Title</h1>
+        <button onclick="editFooter()">Edit</button>
+        <p class="editable" id="footer-note">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+
+        <p>© 2024, <span id="company-rights">Company's name</span>. All rights reserved.</p>
     </div>
+
+    <div class="footer-center">
+        <!-- New Footer Links in List Format (Home, About, Blog) -->
+        <ul class="footer-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Blog</a></li>
+        </ul>
+    </div>
+
     <div class="footer-right">
-      <div id="linksContainer">
-        <!-- Links will be populated here -->
-      </div>
-      <button onclick="addLink()">➕ Add New Link</button>
+        <div id="linksContainer">
+            <!-- Social links will be populated here -->
+        </div>
+        <button onclick="addLink()">➕ Add New Link</button>
     </div>
   </footer>
 
@@ -125,6 +136,20 @@
         footerTitle.textContent = newFooterTitle;
         localStorage.setItem('footerTitle', newFooterTitle);
       }
+
+      const footerNote = document.getElementById('footer-note');
+      const newFooterNote = prompt("Muokkaa footerin tekstiä", footerNote.textContent);
+      if (newFooterNote) {
+        footerNote.textContent = newFooterNote;
+        localStorage.setItem('footerNote', newFooterNote);
+      }
+
+      const companyRights = document.getElementById('company-rights');
+      const newCompanyRights = prompt("Muokkaa yrityksen nimeä ja oikeuksia", companyRights.textContent);
+      if (newCompanyRights) {
+        companyRights.textContent = newCompanyRights;
+        localStorage.setItem('companyRights', newCompanyRights);
+      }
     }
 
     // Social media link management functions
@@ -135,8 +160,8 @@
       storedLinks.forEach((link, index) => {
         const div = document.createElement('div');
         div.className = 'link-row';
-        div.innerHTML = `
-          <a href="${link.url}" target="_blank" style="color: blue;">${link.text}</a>
+        div.innerHTML = ` 
+          <a href="${link.url}" target="_blank" style="color: blue;">${link.text}</a> 
           <button onclick="removeLink(${index})">➖</button>
         `;
         linksContainer.appendChild(div);
@@ -147,7 +172,7 @@
       const linksContainer = document.getElementById('linksContainer');
       const newLinkRow = document.createElement('div');
       newLinkRow.className = 'link-row';
-      newLinkRow.innerHTML = `
+      newLinkRow.innerHTML = ` 
         <input type="text" placeholder="Linkin nimi">
         <input type="text" placeholder="Linkin URL">
         <button onclick="saveNewLink(this)">➕</button>
@@ -186,6 +211,16 @@
       const storedFooterTitle = localStorage.getItem('footerTitle');
       if (storedFooterTitle) {
         document.getElementById('footer-title').textContent = storedFooterTitle;
+      }
+
+      const storedFooterNote = localStorage.getItem('footerNote');
+      if (storedFooterNote) {
+        document.getElementById('footer-note').textContent = storedFooterNote;
+      }
+
+      const storedCompanyRights = localStorage.getItem('companyRights');
+      if (storedCompanyRights) {
+        document.getElementById('company-rights').textContent = storedCompanyRights;
       }
 
       loadLinks();  // Load and display links
