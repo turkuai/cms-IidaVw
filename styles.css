@@ -5,31 +5,36 @@
     box-sizing: border-box;
 }
 
-/* Style for the App Bar */
-.app-bar {
-    background-color: #fd7d7d; /* Dark background color */
-    color: white;            /* Text color */
-    display: flex;
-    align-items: center;     /* Align items vertically */
-    padding: 30px 20px;      /* Padding for top/bottom and left/right */
+/* Top bar */
+.top-bar {
+    text-align: center;
+    padding: 10px;
+    font-size: 18px;
+    border-bottom: 2px solid #ccc;
 }
 
-/* Logo styling */
-.app-bar .logo h1 {
+/* App Bar */
+.app-bar {
+    background-color: #fd7d7d;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 20px;
+}
+
+.logo h1 {
     font-size: 34px;
     font-weight: bold;
-    margin: 0;
 }
 
-/* Navigation Bar */
 .nav-links ul {
     list-style: none;
     display: flex;
-    margin-left: 20px;  /* Adds space between the logo and links */
 }
 
 .nav-links li {
-    margin-left: 20px;  /* Space between links */
+    margin-left: 20px;
 }
 
 .nav-links a {
@@ -40,39 +45,105 @@
     border-radius: 4px;
 }
 
-/* Hover effect for links */
 .nav-links a:hover {
-    background-color: #c75454; /* Darker background on hover */
+    background-color: #c75454;
 }
 
-/* New Section Styling (Text + Image) */
-.content-section {
-    display: flex;  /* Use flexbox to align text and image side by side */
+/* Articles Section */
+.articles {
+    padding: 30px;
+}
+
+.article {
+    display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 40px;
-    margin-top: 20px;
+    align-items: flex-start;
+    border: 2px solid #999;
+    padding: 20px;
+    margin-bottom: 30px;
+    gap: 20px;
 }
 
-.content-section .text {
-    flex: 1;  /* Allow the text to take up the available space */
-    margin-right: 20px; /* Add some space between the text and image */
+.article-text {
+    flex: 3;
 }
 
-.content-section .image img {
-    max-width: 100%; /* Ensure the image doesn't overflow */
+.article-text h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.article-text p {
+    line-height: 1.5;
+}
+
+/* Placeholder Image */
+.article-image {
+    flex: 1;
+    max-width: 200px;
+}
+
+.article-image img {
+    width: 100%;
     height: auto;
-    border-radius: 8px; /* Optional: adds rounded corners to the image */
+    border: 2px solid #000;
+    border-radius: 8px;
 }
 
-/* Responsive Design for smaller screens */
+.x-mark {
+    font-size: 48px;
+    color: #999;
+    font-family: monospace;
+}
+
+/* Footer */
+.footer {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f3f3f3;
+    padding: 30px;
+    border-top: 2px solid #ccc;
+    flex-wrap: wrap;
+}
+
+.footer-left {
+    flex: 1;
+    max-width: 40%;
+}
+
+.footer-right {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.footer-right a {
+    color: blue;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 6px;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-    .content-section {
-        flex-direction: column;  /* Stack the text and image vertically */
-        text-align: center;
+    .article {
+        flex-direction: column;
+        align-items: center;
     }
 
-    .content-section .image {
-        margin-top: 20px; /* Add space between the text and image when stacked */
+    .placeholder-image {
+        width: 100%;
+        height: 180px;
+        margin-top: 20px;
+    }
+
+    .footer {
+        flex-direction: column;
+    }
+
+    .footer-right {
+        margin-top: 20px;
     }
 }
