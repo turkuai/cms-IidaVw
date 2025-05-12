@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CMS Layout</title>
+  <title>CMS Admin</title>
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
@@ -11,11 +11,11 @@
   <div class="app-bar">
     <div class="logo">
       <h1 class="editable" id="logoText">LOGO</h1>
-      <button onclick="editLogo()">Edit</button>
+      <button class="edit-button" onclick="editLogo()">Edit</button>
     </div>
     <nav class="nav-links">
       <ul>
-        <li><a href="#">Home</a></li>
+        <li><a href="index.html">Home</a></li>
         <li><a href="#">About</a></li>
         <li><a href="#">Blog</a></li>
       </ul>
@@ -87,7 +87,7 @@
           </p>
       </div>
       <div class="article-image">
-        <img src="images/cat1.jpg" alt="Cute dog">
+        <img src="images/cat1.jpg" alt="Cute cat">
       </div>
     </section>
   </main>
@@ -95,12 +95,12 @@
   <footer class="footer">
     <div class="footer-left">
         <h1 class="editable" id="footer-title">Your Company's Footer Title</h1>
-        <button onclick="editFooterTitle()">Edit</button>
+        <button class="edit-button" onclick="editFooterTitle()">Edit</button>
         <p class="editable" id="footer-note">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-        <button onclick="editFooterNote()">Edit</button>
+        <button class="edit-button" onclick="editFooterNote()">Edit</button>
 
         <p>© 2025, <span id="companyName">Company's name</span>.</p> 
-        <button onclick="editCompanyName()">Edit</button>
+        <button class="edit-button" onclick="editCompanyName()">Edit</button>
         <br>
         <p>All rights reserved.</p>
     </div>
@@ -108,7 +108,7 @@
     <div class="footer-center">
         <!-- New Footer Links in List Format (Home, About, Blog) -->
         <ul class="footer-links">
-            <li><a href="#">Home</a></li>
+            <li><a href="index.html">Home</a></li>
             <li><a href="#">About</a></li>
             <li><a href="#">Blog</a></li>
         </ul>
@@ -118,7 +118,7 @@
         <div id="linksContainer">
             <!-- Social links will be populated here -->
         </div>
-        <button onclick="addLink()">➕ Add New Link</button>
+        <button class="add-button" onclick="addLink()">Add New Link</button>
     </div>
   </footer>
 
@@ -126,7 +126,7 @@
     // Logo editing function
     function editLogo() {
       const logo = document.getElementById('logoText');
-      const newLogoText = prompt("Muokkaa logo-tekstiä", logo.textContent);
+      const newLogoText = prompt("Edit logo text", logo.textContent);
       if (newLogoText) {
         logo.textContent = newLogoText;
         localStorage.setItem('logoText', newLogoText);
@@ -136,7 +136,7 @@
     // Footer editing functions - split into separate functions
     function editFooterTitle() {
       const footerTitle = document.getElementById('footer-title');
-      const newFooterTitle = prompt("Muokkaa footerin otsikkoa", footerTitle.textContent);
+      const newFooterTitle = prompt("Edit footer title", footerTitle.textContent);
       if (newFooterTitle) {
         footerTitle.textContent = newFooterTitle;
         localStorage.setItem('footerTitle', newFooterTitle);
@@ -145,7 +145,7 @@
 
     function editFooterNote() {
       const footerNote = document.getElementById('footer-note');
-      const newFooterNote = prompt("Muokkaa footerin tekstiä", footerNote.textContent);
+      const newFooterNote = prompt("Edit footer text", footerNote.textContent);
       if (newFooterNote) {
         footerNote.textContent = newFooterNote;
         localStorage.setItem('footerNote', newFooterNote);
@@ -154,7 +154,7 @@
 
     function editCompanyName() {
       const companyName = document.getElementById('companyName');
-      const newCompanyName = prompt("Muokkaa yrityksen nimeä", companyName.textContent);
+      const newCompanyName = prompt("Edit company name", companyName.textContent);
       if (newCompanyName) {
         companyName.textContent = newCompanyName;
         localStorage.setItem('companyName', newCompanyName);
@@ -166,27 +166,67 @@
       const linksContainer = document.getElementById('linksContainer');
       const storedLinks = JSON.parse(localStorage.getItem('socialLinks') || '[]');
       linksContainer.innerHTML = '';
-      storedLinks.forEach((link, index) => {
-        const div = document.createElement('div');
-        div.className = 'link-row';
-        div.innerHTML = ` 
-          <a href="${link.url}" target="_blank" style="color: blue;">${link.text}</a> 
-          <button onclick="removeLink(${index})">➖</button>
-        `;
-        linksContainer.appendChild(div);
-      });
+      
+      if (storedLinks.length === 0) {
+        linksContainer.innerHTML = '<p>No social media links. Add a link using the button below.</p>';
+      } else {
+        storedLinks.forEach((link, index) => {
+          const div = document.createElement('div');
+          div.className = 'link-row';
+          div.innerHTML = ` 
+            <a href="${link.url}" target="_blank" style="color: blue;">${link.text}</a> 
+            <button class="edit-button" onclick="editLink(${index})">Edit</button>
+            <button class="delete-button" onclick="confirmRemoveLink(${index})">Delete</button>
+          `;
+          linksContainer.appendChild(div);
+        });
+      }
     }
 
     function addLink() {
       const linksContainer = document.getElementById('linksContainer');
+      
+      // Remove any existing form before adding a new one
+      const existingForm = document.querySelector('.link-form');
+      if (existingForm) {
+        existingForm.remove();
+      }
+      
       const newLinkRow = document.createElement('div');
-      newLinkRow.className = 'link-row';
+      newLinkRow.className = 'link-row link-form';
       newLinkRow.innerHTML = ` 
-        <input type="text" placeholder="Linkin nimi">
-        <input type="text" placeholder="Linkin URL">
-        <button onclick="saveNewLink(this)">➕</button>
+        <h4>Add New Link</h4>
+        <div style="margin-bottom: 10px;">
+          <label for="newLinkText" style="display: block; margin-bottom: 5px;">Link Text:</label>
+          <input type="text" id="newLinkText" placeholder="e.g. Facebook" style="width: 100%; padding: 5px;">
+        </div>
+        <div style="margin-bottom: 10px;">
+          <label for="newLinkUrl" style="display: block; margin-bottom: 5px;">Link URL:</label>
+          <input type="text" id="newLinkUrl" placeholder="e.g. https://facebook.com" style="width: 100%; padding: 5px;">
+        </div>
+        <div>
+          <button class="save-button" onclick="saveNewLink()">Save</button>
+          <button class="cancel-button" onclick="cancelAddLink(this)">Cancel</button>
+        </div>
       `;
+      
       linksContainer.appendChild(newLinkRow);
+    }
+
+    function cancelAddLink(button) {
+      const linkForm = button.closest('.link-form');
+      if (linkForm) {
+        linkForm.remove();
+      }
+    }
+
+    function confirmRemoveLink(index) {
+      const links = JSON.parse(localStorage.getItem('socialLinks') || '[]');
+      const linkToRemove = links[index];
+      
+      if (confirm(`Are you sure you want to delete the link "${linkToRemove.text}"?`)) {
+        removeLink(index);
+      }
     }
 
     function removeLink(index) {
@@ -196,18 +236,84 @@
       loadLinks();  // Refresh the displayed links
     }
 
-    function saveNewLink(button) {
-      const linkRow = button.parentElement;
-      const inputs = linkRow.querySelectorAll('input');
-      const newLink = {
-        text: inputs[0].value,
-        url: inputs[1].value
-      };
-
+    function editLink(index) {
       const links = JSON.parse(localStorage.getItem('socialLinks') || '[]');
-      links.push(newLink);
-      localStorage.setItem('socialLinks', JSON.stringify(links));
-      loadLinks();  // Refresh the displayed links
+      const linkToEdit = links[index];
+      const linksContainer = document.getElementById('linksContainer');
+      
+      // Remove any existing form before adding a new one
+      const existingForm = document.querySelector('.link-form');
+      if (existingForm) {
+        existingForm.remove();
+      }
+      
+      const editForm = document.createElement('div');
+      editForm.className = 'link-row link-form';
+      editForm.innerHTML = `
+        <h4>Edit Link</h4>
+        <div style="margin-bottom: 10px;">
+          <label for="editLinkText" style="display: block; margin-bottom: 5px;">Link Text:</label>
+          <input type="text" id="editLinkText" value="${linkToEdit.text}" style="width: 100%; padding: 5px;">
+        </div>
+        <div style="margin-bottom: 10px;">
+          <label for="editLinkUrl" style="display: block; margin-bottom: 5px;">Link URL:</label>
+          <input type="text" id="editLinkUrl" value="${linkToEdit.url}" style="width: 100%; padding: 5px;">
+        </div>
+        <div>
+          <button class="save-button" onclick="saveEditLink(${index})">Save Changes</button>
+          <button class="cancel-button" onclick="cancelAddLink(this)">Cancel</button>
+        </div>
+      `;
+      
+      linksContainer.appendChild(editForm);
+    }
+
+    function saveEditLink(index) {
+      const editLinkText = document.getElementById('editLinkText').value;
+      const editLinkUrl = document.getElementById('editLinkUrl').value;
+      
+      if (editLinkText && editLinkUrl) {
+        const links = JSON.parse(localStorage.getItem('socialLinks') || '[]');
+        links[index] = {
+          text: editLinkText,
+          url: editLinkUrl
+        };
+        localStorage.setItem('socialLinks', JSON.stringify(links));
+        
+        // Remove the form and refresh the links
+        const editForm = document.querySelector('.link-form');
+        if (editForm) {
+          editForm.remove();
+        }
+        loadLinks();
+      } else {
+        alert("Both fields are required!");
+      }
+    }
+
+    function saveNewLink() {
+      const newLinkText = document.getElementById('newLinkText').value;
+      const newLinkUrl = document.getElementById('newLinkUrl').value;
+      
+      if (newLinkText && newLinkUrl) {
+        const newLink = {
+          text: newLinkText,
+          url: newLinkUrl
+        };
+
+        const links = JSON.parse(localStorage.getItem('socialLinks') || '[]');
+        links.push(newLink);
+        localStorage.setItem('socialLinks', JSON.stringify(links));
+        
+        // Remove the form and refresh the links
+        const addForm = document.querySelector('.link-form');
+        if (addForm) {
+          addForm.remove();
+        }
+        loadLinks();
+      } else {
+        alert("Both fields are required!");
+      }
     }
 
     // Load saved data when the page loads

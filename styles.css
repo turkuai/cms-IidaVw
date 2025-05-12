@@ -100,77 +100,6 @@
     font-family: monospace;
 }
 
-/* Footer */
-.footer {
-    display: flex;
-    justify-content: space-between;
-    background-color: #f3f3f3;
-    padding: 30px;
-    border-top: 2px solid #ccc;
-    flex-wrap: wrap;
-}
-
-.footer-left {
-    flex: 1;
-    max-width: 40%;
-}
-
-.footer-right {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end; /* Align links to the right */
-    gap: 40px;
-    flex-direction: column; /* Align links vertically */
-}
-
-.footer-right a {
-    color: blue;
-    text-decoration: none;
-    display: inline-block;
-    margin-bottom: 6px;
-}
-
-.footer-right a:hover {
-    color: #fd7d7d;
-    text-decoration: underline;
-}
-
-/* Footer */
-.footer {
-    display: flex;
-    justify-content: space-between;
-    background-color: #f3f3f3;
-    padding: 30px;
-    border-top: 2px solid #ccc;
-    flex-wrap: wrap;
-}
-
-.footer-left {
-    flex: 1;
-    max-width: 40%;
-}
-
-.footer-right {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end; /* Align links to the right */
-    gap: 40px;
-    flex-direction: column; /* Align links vertically */
-    padding-right: 20px; /* Add space between links and right edge */
-}
-
-.footer-right a {
-    color: blue;
-    text-decoration: none;
-    display: inline-block;
-    margin-bottom: 6px;
-}
-
-.footer-right a:hover {
-    color: #fd7d7d;
-    text-decoration: underline;
-}
-
 /* Footer Layout */
 .footer {
     display: flex;
@@ -306,9 +235,6 @@
 }
 
 .link-row button {
-    background-color: #fd7d7d;
-    color: white;
-    border: none;
     padding: 6px 10px;
     font-size: 16px;
     border-radius: 4px;
@@ -316,14 +242,8 @@
     transition: background-color 0.3s ease;
 }
 
-.link-row button:hover {
-    background-color: #c75454;
-}
-
 .admin-container button {
     margin-top: 20px;
-    background-color: #c75454;
-    color: white;
     border: none;
     padding: 10px 16px;
     font-size: 16px;
@@ -332,10 +252,6 @@
     transition: background-color 0.3s ease;
 }
 
-.admin-container button:hover {
-    background-color: #a33c3c;
-}
-
 .editable {
     display: inline-block;
     border-bottom: 1px dashed #fd7d7d;
@@ -348,56 +264,77 @@
     font-size: 16px;
 }
 
+/* Päivitetyt painike-tyylit */
 button {
     padding: 5px 10px;
-    background-color: #fd7d7d;
-    color: white;
     border: none;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    border-radius: 5px;
+    margin: 2px;
 }
 
-button:hover {
-    background-color: #c75454;
+.edit-button {
+    background-color: #8BC34A; /* Light green */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 2px;
 }
 
-.link-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.delete-button {
+    background-color: #f44336; /* Red */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 2px;
+}
+
+.save-button {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 2px;
+}
+
+.cancel-button {
+    background-color: #ccc; /* Gray */
+    color: black;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 2px;
+}
+
+.add-button {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 5px;
     margin-top: 10px;
 }
 
-.link-row input {
-    padding: 5px;
-    font-size: 16px;
-    flex: 1;
+/* Link form tyylit */
+.link-form {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 15px;
+    border: 1px solid #ddd;
 }
 
-/* Editable Section for Footer */
-.editable {
-    display: inline-block;
-    border-bottom: 1px dashed #fd7d7d;
-    cursor: pointer;
-}
-
-.editable input {
-    border: 1px solid #fd7d7d;
-    padding: 5px;
-    font-size: 16px;
-}
-
-.edit-btn {
-    background-color: #fd7d7d;
-    color: white;
-    border: none;
-    padding: 4px 8px;
-    font-size: 14px;
-    cursor: pointer;
-    margin-left: 8px;
-    border-radius: 4px;
-}
-
-.edit-btn:hover {
-    background-color: #c75454;
+.link-form h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
 }
