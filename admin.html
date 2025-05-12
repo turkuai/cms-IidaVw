@@ -38,6 +38,19 @@
       min-width: 300px; /* Minimum width for text content */
     }
 
+    /* Alignment classes for images */
+    .align-left {
+      align-items: flex-start;
+    }
+    
+    .align-right {
+      align-items: flex-end;
+    }
+    
+    .align-center {
+      align-items: center;
+    }
+
     /* Responsive design for smaller screens */
     @media (max-width: 768px) {
       .article {
@@ -187,7 +200,8 @@
             imageSrc: 'images/dog1.jpg',
             imageAlt: 'Cute dog',
             imageWidth: 200, // Default image width
-            imageHeight: 'auto' // Default image height
+            imageHeight: 'auto', // Default image height
+            imageAlignment: 'center'
           },
           {
             id: 'article2',
@@ -218,7 +232,8 @@
             imageSrc: 'images/cat1.jpg',
             imageAlt: 'Cute cat',
             imageWidth: 200, // Default image width
-            imageHeight: 'auto' // Default image height
+            imageHeight: 'auto', // Default image height
+            imageAlignment: 'center'
           }
         ];
         
@@ -233,6 +248,7 @@
         // Set default image dimensions if not present
         if (!article.imageWidth) article.imageWidth = 200;
         if (!article.imageHeight) article.imageHeight = 'auto';
+        if (!article.imageAlignment) article.imageAlignment = 'center';
         
         const section = document.createElement('section');
         section.className = 'article';
@@ -248,7 +264,7 @@
             </div>
             <button class="edit-button edit-content-button" onclick="editArticleContent('${article.id}')">Edit Content</button>
           </div>
-          <div class="article-image">
+          <div class="article-image align-${article.imageAlignment}">
             <img 
               src="${article.imageSrc}" 
               alt="${article.imageAlt}" 
@@ -414,9 +430,9 @@
               <div style="margin-top: 15px;">
                 <label for="image-alignment" style="display: block; margin-bottom: 5px;">Image Alignment:</label>
                 <select id="image-alignment" style="width: 100%; padding: 8px;">
-                  <option value="center">Center</option>
-                  <option value="right">Right</option>
-                  <option value="left">Left</option>
+                  <option value="center" ${article.imageAlignment === 'center' ? 'selected' : ''}>Center</option>
+                  <option value="right" ${article.imageAlignment === 'right' ? 'selected' : ''}>Right</option>
+                  <option value="left" ${article.imageAlignment === 'left' ? 'selected' : ''}>Left</option>
                 </select>
               </div>
             </div>
@@ -501,12 +517,20 @@
     }
 
     function addNewArticle() {
+      // Get the new title from user
+      const newTitle = prompt("Enter new article title", "New Article Title");
+      
+      if (!newTitle || newTitle.trim() === '') {
+        return; // User cancelled or entered empty title
+      }
+      
       const articles = JSON.parse(localStorage.getItem('pageArticles') || '[]');
       const newId = 'article' + (Date.now().toString()); // Käytetään aikaleimaa ID:nä
       
-      const newArticle = {
+      // Default new article
+      let newArticle = {
         id: newId,
-        title: 'New Article Title',
+        title: newTitle.trim(),
         content: '<p>Enter your article content here.</p>',
         imageSrc: 'images/placeholder.jpg',
         imageAlt: 'Placeholder image',
@@ -515,14 +539,110 @@
         imageAlignment: 'center' // Default alignment
       };
       
+      // Check if title matches a template and populate with original content
+      const titleLower = newTitle.toLowerCase().trim();
+      
+      // Sunny template
+      if (titleLower.includes("sunny") || 
+          titleLower.includes("golden ray") || 
+          titleLower.includes("meet sunny")) {
+        
+        // Check if an article with this title already exists
+        const exists = articles.some(article => 
+          article.title.toLowerCase().includes("sunny") || 
+          article.title.toLowerCase().includes("golden ray")
+        );
+        
+        if (!exists) {
+          newArticle = {
+            id: newId,
+            title: 'Meet Sunny – A Golden Ray of Joy!',
+            content: `<p>
+              <strong>Name:</strong> Sunny<br>
+              <strong>Breed:</strong> Golden Retriever<br>
+              <strong>Color:</strong> Golden<br>
+              <strong>Age:</strong> 4 months<br>
+              <strong>Gender:</strong> Female
+            </p>
+            <p>
+              Sunny is a playful and affectionate Golden Retriever puppy with a heart full of love and endless puppy energy. 
+              She loves chasing balls, making new friends, and cuddling up for naps after playtime.
+            </p>
+            <p>
+              With her soft golden fur and sweet eyes, she'll steal your heart in seconds! Sunny is very social, eager to learn, 
+              and responds well to positive training.
+            </p>
+            <p>
+              She's great with kids, other dogs, and would thrive in an active home where she can explore, play, and grow into 
+              the loyal companion she's meant to be.
+            </p>
+            <p>
+              Sunny is up to date on her vaccinations and is learning fast with house training.
+            </p>
+            <p>
+              👉 Think Sunny might be your perfect match? Apply now to adopt and give her the loving home she deserves!
+            </p>`,
+            imageSrc: 'images/dog1.jpg',
+            imageAlt: 'Cute dog',
+            imageWidth: 200,
+            imageHeight: 'auto',
+            imageAlignment: 'center'
+          };
+          alert("Sunny template detected! Article populated with the original Sunny content.");
+        }
+      }
+      
+      // Pumpkin template
+      else if (titleLower.includes("pumpkin") || 
+               titleLower.includes("furry friend") || 
+               titleLower.includes("meet pumpkin")) {
+        
+        // Check if an article with this title already exists
+        const exists = articles.some(article => 
+          article.title.toLowerCase().includes("pumpkin") || 
+          article.title.toLowerCase().includes("furry friend")
+        );
+        
+        if (!exists) {
+          newArticle = {
+            id: newId,
+            title: 'Meet Pumpkin – Your Future Furry Friend!',
+            content: `<p>
+              <strong>Name:</strong> Pumpkin<br>
+              <strong>Breed:</strong> Domestic Longhair<br>
+              <strong>Color:</strong> Orange<br>
+              <strong>Age:</strong> 3 years<br>
+              <strong>Gender:</strong> Male
+            </p>
+            <p>
+              Pumpkin is a sweet and curious orange cat with striking green eyes and a fluffy coat. 
+              He loves to lounge on soft rugs and quietly observe the world around him.
+            </p>
+            <p>
+              Pumpkin has a gentle personality and enjoys both quiet cuddle time and playful pouncing with his toys.
+            </p>
+            <p>
+              He gets along well with people and would be a perfect match for a calm home where he can feel safe and loved.
+            </p>
+            <p>
+              Pumpkin is neutered, vaccinated, and litter trained—ready to join his forever family!
+            </p>
+            <p>
+              👉 Ready to adopt Pumpkin? Fill out an application on our website and give this lovable cat the home he deserves.
+            </p>`,
+            imageSrc: 'images/cat1.jpg',
+            imageAlt: 'Cute cat',
+            imageWidth: 200,
+            imageHeight: 'auto',
+            imageAlignment: 'center'
+          };
+          alert("Pumpkin template detected! Article populated with the original Pumpkin content.");
+        }
+      }
+      
       articles.push(newArticle);
       localStorage.setItem('pageArticles', JSON.stringify(articles));
       loadArticles(); // Refresh articles
-      
-      // Automatically open the edit dialog
-      setTimeout(() => {
-        editArticleTitle(newId);
-      }, 100);
       
       // Scroll to the new article
       setTimeout(() => {
