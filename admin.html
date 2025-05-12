@@ -38,12 +38,12 @@
             She loves chasing balls, making new friends, and cuddling up for naps after playtime.
           </p>
           <p>
-            With her soft golden fur and sweet eyes, she’ll steal your heart in seconds! Sunny is very social, eager to learn, 
+            With her soft golden fur and sweet eyes, she'll steal your heart in seconds! Sunny is very social, eager to learn, 
             and responds well to positive training.
           </p>
           <p>
-            She’s great with kids, other dogs, and would thrive in an active home where she can explore, play, and grow into 
-            the loyal companion she’s meant to be.
+            She's great with kids, other dogs, and would thrive in an active home where she can explore, play, and grow into 
+            the loyal companion she's meant to be.
           </p>
           <p>
             Sunny is up to date on her vaccinations and is learning fast with house training.
@@ -95,10 +95,12 @@
   <footer class="footer">
     <div class="footer-left">
         <h1 class="editable" id="footer-title">Your Company's Footer Title</h1>
-        <button onclick="editFooter()">Edit</button>
+        <button onclick="editFooterTitle()">Edit</button>
         <p class="editable" id="footer-note">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <button onclick="editFooterNote()">Edit</button>
 
-        <p>© 2025, <span id="company-rights">Company's name</span>.</p> 
+        <p>© 2025, <span id="companyName">Company's name</span>.</p> 
+        <button onclick="editCompanyName()">Edit</button>
         <br>
         <p>All rights reserved.</p>
     </div>
@@ -121,7 +123,7 @@
   </footer>
 
   <script>
-    // Logo and footer editing functions
+    // Logo editing function
     function editLogo() {
       const logo = document.getElementById('logoText');
       const newLogoText = prompt("Muokkaa logo-tekstiä", logo.textContent);
@@ -131,26 +133,31 @@
       }
     }
 
-    function editFooter() {
+    // Footer editing functions - split into separate functions
+    function editFooterTitle() {
       const footerTitle = document.getElementById('footer-title');
       const newFooterTitle = prompt("Muokkaa footerin otsikkoa", footerTitle.textContent);
       if (newFooterTitle) {
         footerTitle.textContent = newFooterTitle;
         localStorage.setItem('footerTitle', newFooterTitle);
       }
+    }
 
+    function editFooterNote() {
       const footerNote = document.getElementById('footer-note');
       const newFooterNote = prompt("Muokkaa footerin tekstiä", footerNote.textContent);
       if (newFooterNote) {
         footerNote.textContent = newFooterNote;
         localStorage.setItem('footerNote', newFooterNote);
       }
+    }
 
-      const companyRights = document.getElementById('company-rights');
-      const newCompanyRights = prompt("Muokkaa yrityksen nimeä ja oikeuksia", companyRights.textContent);
-      if (newCompanyRights) {
-        companyRights.textContent = newCompanyRights;
-        localStorage.setItem('companyRights', newCompanyRights);
+    function editCompanyName() {
+      const companyName = document.getElementById('companyName');
+      const newCompanyName = prompt("Muokkaa yrityksen nimeä", companyName.textContent);
+      if (newCompanyName) {
+        companyName.textContent = newCompanyName;
+        localStorage.setItem('companyName', newCompanyName);
       }
     }
 
@@ -220,9 +227,9 @@
         document.getElementById('footer-note').textContent = storedFooterNote;
       }
 
-      const storedCompanyRights = localStorage.getItem('companyRights');
-      if (storedCompanyRights) {
-        document.getElementById('company-rights').textContent = storedCompanyRights;
+      const storedCompanyName = localStorage.getItem('companyName');
+      if (storedCompanyName) {
+        document.getElementById('companyName').textContent = storedCompanyName;
       }
 
       loadLinks();  // Load and display links

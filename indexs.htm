@@ -37,12 +37,12 @@
             She loves chasing balls, making new friends, and cuddling up for naps after playtime.
           </p>
           <p>
-            With her soft golden fur and sweet eyes, she’ll steal your heart in seconds! Sunny is very social, eager to learn, 
+            With her soft golden fur and sweet eyes, she'll steal your heart in seconds! Sunny is very social, eager to learn, 
             and responds well to positive training.
           </p>
           <p>
-            She’s great with kids, other dogs, and would thrive in an active home where she can explore, play, and grow into 
-            the loyal companion she’s meant to be.
+            She's great with kids, other dogs, and would thrive in an active home where she can explore, play, and grow into 
+            the loyal companion she's meant to be.
           </p>
           <p>
             Sunny is up to date on her vaccinations and is learning fast with house training.
@@ -97,7 +97,7 @@
     <div class="footer-left">
       <h3 id="footer-title">Your Company's Name</h3>
       <p id="footer-note">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-      <p>&copy; 2025, Company's name.</p>
+      <p>&copy; 2025, <span id="companyName">Company's name</span>.</p>
       <br>
       <p>All rights reserved.</p>
     </div>
@@ -119,7 +119,7 @@
   </footer>
 
   <script>
-    // Lataa tallennetut tiedot
+    // Load saved data when the page loads
     window.addEventListener('DOMContentLoaded', () => {
       const storedLogo = localStorage.getItem('logoText');
       if (storedLogo) {
@@ -136,10 +136,15 @@
         document.getElementById('footer-note').textContent = storedFooterNote;
       }
 
-      loadLinks();  // Lataa ja näytä linkit
+      const storedCompanyName = localStorage.getItem('companyName');
+      if (storedCompanyName) {
+        document.getElementById('companyName').textContent = storedCompanyName;
+      }
+
+      loadLinks();  // Load and display links
     });
 
-    // Lataa ja näyttää linkit
+    // Load and display links
     function loadLinks() {
       const linksContainer = document.getElementById('linksContainer');
       const storedLinks = JSON.parse(localStorage.getItem('socialLinks') || '[]');
