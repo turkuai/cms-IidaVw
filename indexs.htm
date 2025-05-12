@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CMS Layout</title>
+  <title>Pet Adoption</title>
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
@@ -14,82 +14,15 @@
     </div>
     <nav class="nav-links">
       <ul>
-        <li><a href="#">Home</a></li>
+        <li><a href="index.html">Home</a></li>
         <li><a href="#">About</a></li>
         <li><a href="#">Blog</a></li>
       </ul>
     </nav>
   </div>
 
-  <main class="articles">
-    <section class="article">
-      <div class="article-text">
-        <h2>Meet Sunny – A Golden Ray of Joy!</h2>
-        <p>
-            <strong>Name:</strong> Sunny<br>
-            <strong>Breed:</strong> Golden Retriever<br>
-            <strong>Color:</strong> Golden<br>
-            <strong>Age:</strong> 4 months<br>
-            <strong>Gender:</strong> Female
-          </p>
-          <p>
-            Sunny is a playful and affectionate Golden Retriever puppy with a heart full of love and endless puppy energy. 
-            She loves chasing balls, making new friends, and cuddling up for naps after playtime.
-          </p>
-          <p>
-            With her soft golden fur and sweet eyes, she'll steal your heart in seconds! Sunny is very social, eager to learn, 
-            and responds well to positive training.
-          </p>
-          <p>
-            She's great with kids, other dogs, and would thrive in an active home where she can explore, play, and grow into 
-            the loyal companion she's meant to be.
-          </p>
-          <p>
-            Sunny is up to date on her vaccinations and is learning fast with house training.
-          </p>
-          <p>
-            👉 Think Sunny might be your perfect match? Apply now to adopt and give her the loving home she deserves!
-          </p>
-      </div>
-      <div class="article-image">
-        <img src="images/dog1.jpg" alt="Cute dog">
-      </div>
-    </section>
-  
-    <section class="article">
-      <div class="article-text">
-        <h2>Meet Pumpkin – Your Future Furry Friend!</h2>
-        <p>
-            <strong>Name:</strong> Pumpkin<br>
-            <strong>Breed:</strong> Domestic Longhair<br>
-            <strong>Color:</strong> Orange<br>
-            <strong>Age:</strong> 3 years<br>
-            <strong>Gender:</strong> Male
-          </p>
-
-          <br>
-
-        <p>
-            Pumpkin is a sweet and curious orange cat with striking green eyes and a fluffy coat. 
-            He loves to lounge on soft rugs and quietly observe the world around him.
-          </p>
-          <p>
-            Pumpkin has a gentle personality and enjoys both quiet cuddle time and playful pouncing with his toys.
-          </p>
-          <p>
-            He gets along well with people and would be a perfect match for a calm home where he can feel safe and loved.
-          </p>
-          <p>
-            Pumpkin is neutered, vaccinated, and litter trained—ready to join his forever family!
-          </p>
-          <p>
-            👉 Ready to adopt Pumpkin? Fill out an application on our website and give this lovable cat the home he deserves.
-          </p>
-      </div>
-      <div class="article-image">
-        <img src="images/cat1.jpg" alt="Cute dog">
-      </div>
-    </section>
+  <main class="articles" id="articlesContainer">
+    <!-- Artikkeliosiot lisätään tähän dynaamisesti -->
   </main>
   
   <!-- Footer Section -->
@@ -103,11 +36,10 @@
     </div>
     
     <div class="footer-center">
-      <!-- New Footer Links in List Format (Home, About, Blog) -->
       <ul class="footer-links">
-          <li><a href="#">Home</a></li>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Blog</a></li>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Blog</a></li>
       </ul>
     </div>
 
@@ -119,7 +51,115 @@
   </footer>
 
   <script>
-    // Load saved data when the page loads
+    // Artikkelien lataus ja näyttäminen
+    function loadArticles() {
+      const container = document.getElementById('articlesContainer');
+      const articles = JSON.parse(localStorage.getItem('pageArticles') || '[]');
+      
+      // Tyhjennä ensin container
+      container.innerHTML = '';
+      
+      if (articles.length === 0) {
+        // Jos ei ole artikkeleita, näytetään esimerkkisisältö
+        const defaultArticles = [
+          {
+            id: 'article1',
+            title: 'Meet Sunny – A Golden Ray of Joy!',
+            content: `<p>
+              <strong>Name:</strong> Sunny<br>
+              <strong>Breed:</strong> Golden Retriever<br>
+              <strong>Color:</strong> Golden<br>
+              <strong>Age:</strong> 4 months<br>
+              <strong>Gender:</strong> Female
+            </p>
+            <p>
+              Sunny is a playful and affectionate Golden Retriever puppy with a heart full of love and endless puppy energy. 
+              She loves chasing balls, making new friends, and cuddling up for naps after playtime.
+            </p>
+            <p>
+              With her soft golden fur and sweet eyes, she'll steal your heart in seconds! Sunny is very social, eager to learn, 
+              and responds well to positive training.
+            </p>
+            <p>
+              She's great with kids, other dogs, and would thrive in an active home where she can explore, play, and grow into 
+              the loyal companion she's meant to be.
+            </p>
+            <p>
+              Sunny is up to date on her vaccinations and is learning fast with house training.
+            </p>
+            <p>
+              👉 Think Sunny might be your perfect match? Apply now to adopt and give her the loving home she deserves!
+            </p>`,
+            imageSrc: 'images/dog1.jpg',
+            imageAlt: 'Cute dog',
+            imageWidth: 200,
+            imageHeight: 'auto'
+          },
+          {
+            id: 'article2',
+            title: 'Meet Pumpkin – Your Future Furry Friend!',
+            content: `<p>
+              <strong>Name:</strong> Pumpkin<br>
+              <strong>Breed:</strong> Domestic Longhair<br>
+              <strong>Color:</strong> Orange<br>
+              <strong>Age:</strong> 3 years<br>
+              <strong>Gender:</strong> Male
+            </p>
+            <p>
+              Pumpkin is a sweet and curious orange cat with striking green eyes and a fluffy coat. 
+              He loves to lounge on soft rugs and quietly observe the world around him.
+            </p>
+            <p>
+              Pumpkin has a gentle personality and enjoys both quiet cuddle time and playful pouncing with his toys.
+            </p>
+            <p>
+              He gets along well with people and would be a perfect match for a calm home where he can feel safe and loved.
+            </p>
+            <p>
+              Pumpkin is neutered, vaccinated, and litter trained—ready to join his forever family!
+            </p>
+            <p>
+              👉 Ready to adopt Pumpkin? Fill out an application on our website and give this lovable cat the home he deserves.
+            </p>`,
+            imageSrc: 'images/cat1.jpg',
+            imageAlt: 'Cute cat',
+            imageWidth: 200,
+            imageHeight: 'auto'
+          }
+        ];
+        
+        // Tallenna oletusartikkelit
+        localStorage.setItem('pageArticles', JSON.stringify(defaultArticles));
+        // Lataa uudelleen
+        return loadArticles();
+      }
+      
+      // Näytä artikkelit
+      articles.forEach(article => {
+        // Aseta oletusarvot kuvan koolle jos ne puuttuvat
+        if (!article.imageWidth) article.imageWidth = 200;
+        if (!article.imageHeight) article.imageHeight = 'auto';
+        
+        const section = document.createElement('section');
+        section.className = 'article';
+        section.id = article.id;
+        
+        const content = `
+          <div class="article-text">
+            <h2>${article.title}</h2>
+            ${article.content}
+          </div>
+          <div class="article-image">
+            <img src="${article.imageSrc}" alt="${article.imageAlt}" style="width: ${article.imageWidth}px; height: ${article.imageHeight === 'auto' ? 'auto' : article.imageHeight + 'px'};">
+          </div>
+        `;
+        
+        section.innerHTML = content;
+        container.appendChild(section);
+      });
+    }
+
+    // Lataa tallennetut tiedot kun sivu latautuu
     window.addEventListener('DOMContentLoaded', () => {
       const storedLogo = localStorage.getItem('logoText');
       if (storedLogo) {
@@ -141,10 +181,11 @@
         document.getElementById('companyName').textContent = storedCompanyName;
       }
 
-      loadLinks();  // Load and display links
+      loadLinks();  // Lataa ja näytä linkit
+      loadArticles(); // Lataa ja näytä artikkelit
     });
 
-    // Load and display links
+    // Lataa ja näytä linkit
     function loadLinks() {
       const linksContainer = document.getElementById('linksContainer');
       const storedLinks = JSON.parse(localStorage.getItem('socialLinks') || '[]');

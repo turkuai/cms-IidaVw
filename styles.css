@@ -59,6 +59,7 @@
 
 .article {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: flex-start;
     border: 2px solid #999;
@@ -67,8 +68,13 @@
     gap: 20px;
 }
 
+.article + .article {
+    margin-top: 30px;
+}
+
 .article-text {
-    flex: 3;
+    flex: 2;
+    min-width: 300px;
 }
 
 .article-text h2 {
@@ -81,10 +87,19 @@
     line-height: 1.5;
 }
 
+.article-content {
+    margin-top: 10px;
+}
+
 /* Placeholder Image */
 .article-image {
     flex: 1;
-    max-width: 200px;
+    min-width: 200px;
+    max-width: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
 }
 
 .article-image img {
@@ -94,16 +109,49 @@
     border-radius: 8px;
 }
 
+.image-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+}
+
+.image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
 .x-mark {
     font-size: 48px;
     color: #999;
     font-family: monospace;
 }
 
+/* Article Actions */
+.article-actions {
+    flex-basis: 100%;
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.delete-article-button {
+    margin-top: 15px;
+    float: right;
+}
+
+.edit-content-button {
+    margin-top: 15px;
+}
+
 /* Footer Layout */
 .footer {
     display: flex;
-    justify-content: space-between;  /* Space out left, center, and right sections */
+    justify-content: space-between;
     padding: 20px;
     background-color: #f1f1f1;
     border-top: 2px solid #ccc;
@@ -127,9 +175,9 @@
     padding: 0;
     margin: 0;
     display: flex;
-    flex-direction: column;  /* Stack links vertically */
-    align-items: center;  /* Center align the links */
-    gap: 10px;  /* Space between each link */
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
 }
 
 .footer-links li {
@@ -166,29 +214,24 @@
     text-decoration: underline;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .article {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .article-image {
-        width: 100%;
-        height: 180px;
-        margin-top: 20px;
-    }
-
-    .footer {
-        flex-direction: column;
-    }
-
-    .footer-right {
-        margin-top: 20px;
-    }
+/* Admin Tools and Controls */
+.admin-tools {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 30px;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #ddd;
 }
 
-/* Admin page styles */
+.footer-admin-tools {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-top: 1px solid #ddd;
+}
+
+/* Admin Container Styles */
 .admin-container {
     max-width: 800px;
     margin: 40px auto;
@@ -221,27 +264,6 @@
     border-radius: 6px;
 }
 
-.link-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.link-row input {
-    flex: 1;
-    padding: 6px 10px;
-    font-size: 16px;
-}
-
-.link-row button {
-    padding: 6px 10px;
-    font-size: 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
 .admin-container button {
     margin-top: 20px;
     border: none;
@@ -252,19 +274,7 @@
     transition: background-color 0.3s ease;
 }
 
-.editable {
-    display: inline-block;
-    border-bottom: 1px dashed #fd7d7d;
-    cursor: pointer;
-}
-
-.editable input {
-    border: 1px solid #fd7d7d;
-    padding: 5px;
-    font-size: 16px;
-}
-
-/* Päivitetyt painike-tyylit */
+/* Button Styles */
 button {
     padding: 5px 10px;
     border: none;
@@ -324,7 +334,45 @@ button {
     margin-top: 10px;
 }
 
-/* Link form tyylit */
+.add-button:hover {
+    background-color: #45a049;
+}
+
+/* Editable Elements */
+.editable {
+    display: inline-block;
+    border-bottom: 1px dashed #fd7d7d;
+    cursor: pointer;
+}
+
+.editable input {
+    border: 1px solid #fd7d7d;
+    padding: 5px;
+    font-size: 16px;
+}
+
+/* Link Styles */
+.link-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.link-row input {
+    flex: 1;
+    padding: 6px 10px;
+    font-size: 16px;
+}
+
+.link-row button {
+    padding: 6px 10px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
 .link-form {
     background-color: #f9f9f9;
     padding: 15px;
@@ -337,4 +385,75 @@ button {
     margin-top: 0;
     margin-bottom: 15px;
     color: #333;
+}
+
+/* Edit Modal */
+.edit-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.edit-modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 80%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.edit-modal h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.editor-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Image Upload Form */
+.image-upload {
+    margin-bottom: 15px;
+}
+
+.image-upload input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .article {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .article-image {
+        width: 100%;
+        height: 180px;
+        margin-top: 20px;
+    }
+
+    .footer {
+        flex-direction: column;
+    }
+
+    .footer-right {
+        margin-top: 20px;
+    }
 }

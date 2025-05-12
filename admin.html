@@ -22,79 +22,18 @@
     </nav>
   </div>
 
-  <main class="articles">
-    <section class="article">
-      <div class="article-text">
-        <h2>Meet Sunny – A Golden Ray of Joy!</h2>
-        <p>
-            <strong>Name:</strong> Sunny<br>
-            <strong>Breed:</strong> Golden Retriever<br>
-            <strong>Color:</strong> Golden<br>
-            <strong>Age:</strong> 4 months<br>
-            <strong>Gender:</strong> Female
-          </p>
-          <p>
-            Sunny is a playful and affectionate Golden Retriever puppy with a heart full of love and endless puppy energy. 
-            She loves chasing balls, making new friends, and cuddling up for naps after playtime.
-          </p>
-          <p>
-            With her soft golden fur and sweet eyes, she'll steal your heart in seconds! Sunny is very social, eager to learn, 
-            and responds well to positive training.
-          </p>
-          <p>
-            She's great with kids, other dogs, and would thrive in an active home where she can explore, play, and grow into 
-            the loyal companion she's meant to be.
-          </p>
-          <p>
-            Sunny is up to date on her vaccinations and is learning fast with house training.
-          </p>
-
-          <p>
-            👉 Think Sunny might be your perfect match? Apply now to adopt and give her the loving home she deserves!
-          </p>
-      </div>
-      <div class="article-image">
-        <img src="images/dog1.jpg" alt="Cute dog">
-      </div>
-    </section>
-
-    <section class="article">
-      <div class="article-text">
-        <h2>Meet Pumpkin – Your Future Furry Friend!</h2>
-        <p>
-            <strong>Name:</strong> Pumpkin<br>
-            <strong>Breed:</strong> Domestic Longhair<br>
-            <strong>Color:</strong> Orange<br>
-            <strong>Age:</strong> 3 years<br>
-            <strong>Gender:</strong> Male
-          </p>
-          <p>
-            Pumpkin is a sweet and curious orange cat with striking green eyes and a fluffy coat. 
-            He loves to lounge on soft rugs and quietly observe the world around him.
-          </p>
-          <p>
-            Pumpkin has a gentle personality and enjoys both quiet cuddle time and playful pouncing with his toys.
-          </p>
-          <p>
-            He gets along well with people and would be a perfect match for a calm home where he can feel safe and loved.
-          </p>
-          <p>
-            Pumpkin is neutered, vaccinated, and litter trained—ready to join his forever family!
-          </p>
-
-          <p>
-            👉 Ready to adopt Pumpkin? Fill out an application on our website and give this lovable cat the home he deserves.
-          </p>
-      </div>
-      <div class="article-image">
-        <img src="images/cat1.jpg" alt="Cute cat">
-      </div>
-    </section>
+  <main class="articles" id="articlesContainer">
+    <!-- Articles will be loaded here dynamically -->
   </main>
+  
+  <!-- Add New Article button moved to bottom -->
+  <div class="footer-admin-tools">
+    <button class="add-button" onclick="addNewArticle()">+ Add New Article</button>
+  </div>
 
   <footer class="footer">
     <div class="footer-left">
-        <h1 class="editable" id="footer-title">Your Company's Footer Title</h1>
+        <h3 class="editable" id="footer-title">Your Company's Footer Title</h3>
         <button class="edit-button" onclick="editFooterTitle()">Edit</button>
         <p class="editable" id="footer-note">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
         <button class="edit-button" onclick="editFooterNote()">Edit</button>
@@ -106,7 +45,6 @@
     </div>
 
     <div class="footer-center">
-        <!-- New Footer Links in List Format (Home, About, Blog) -->
         <ul class="footer-links">
             <li><a href="index.html">Home</a></li>
             <li><a href="#">About</a></li>
@@ -133,7 +71,7 @@
       }
     }
 
-    // Footer editing functions - split into separate functions
+    // Footer editing functions
     function editFooterTitle() {
       const footerTitle = document.getElementById('footer-title');
       const newFooterTitle = prompt("Edit footer title", footerTitle.textContent);
@@ -159,6 +97,350 @@
         companyName.textContent = newCompanyName;
         localStorage.setItem('companyName', newCompanyName);
       }
+    }
+
+    // Article management functions
+    function loadArticles() {
+      const container = document.getElementById('articlesContainer');
+      const articles = JSON.parse(localStorage.getItem('pageArticles') || '[]');
+      
+      // Clear container first
+      container.innerHTML = '';
+      
+      if (articles.length === 0) {
+        // If no articles, show sample content
+        const defaultArticles = [
+          {
+            id: 'article1',
+            title: 'Meet Sunny – A Golden Ray of Joy!',
+            content: `<p>
+              <strong>Name:</strong> Sunny<br>
+              <strong>Breed:</strong> Golden Retriever<br>
+              <strong>Color:</strong> Golden<br>
+              <strong>Age:</strong> 4 months<br>
+              <strong>Gender:</strong> Female
+            </p>
+            <p>
+              Sunny is a playful and affectionate Golden Retriever puppy with a heart full of love and endless puppy energy. 
+              She loves chasing balls, making new friends, and cuddling up for naps after playtime.
+            </p>
+            <p>
+              With her soft golden fur and sweet eyes, she'll steal your heart in seconds! Sunny is very social, eager to learn, 
+              and responds well to positive training.
+            </p>
+            <p>
+              She's great with kids, other dogs, and would thrive in an active home where she can explore, play, and grow into 
+              the loyal companion she's meant to be.
+            </p>
+            <p>
+              Sunny is up to date on her vaccinations and is learning fast with house training.
+            </p>
+            <p>
+              👉 Think Sunny might be your perfect match? Apply now to adopt and give her the loving home she deserves!
+            </p>`,
+            imageSrc: 'images/dog1.jpg',
+            imageAlt: 'Cute dog',
+            imageWidth: 200, // Default image width
+            imageHeight: 'auto' // Default image height
+          },
+          {
+            id: 'article2',
+            title: 'Meet Pumpkin – Your Future Furry Friend!',
+            content: `<p>
+              <strong>Name:</strong> Pumpkin<br>
+              <strong>Breed:</strong> Domestic Longhair<br>
+              <strong>Color:</strong> Orange<br>
+              <strong>Age:</strong> 3 years<br>
+              <strong>Gender:</strong> Male
+            </p>
+            <p>
+              Pumpkin is a sweet and curious orange cat with striking green eyes and a fluffy coat. 
+              He loves to lounge on soft rugs and quietly observe the world around him.
+            </p>
+            <p>
+              Pumpkin has a gentle personality and enjoys both quiet cuddle time and playful pouncing with his toys.
+            </p>
+            <p>
+              He gets along well with people and would be a perfect match for a calm home where he can feel safe and loved.
+            </p>
+            <p>
+              Pumpkin is neutered, vaccinated, and litter trained—ready to join his forever family!
+            </p>
+            <p>
+              👉 Ready to adopt Pumpkin? Fill out an application on our website and give this lovable cat the home he deserves.
+            </p>`,
+            imageSrc: 'images/cat1.jpg',
+            imageAlt: 'Cute cat',
+            imageWidth: 200, // Default image width
+            imageHeight: 'auto' // Default image height
+          }
+        ];
+        
+        // Save default articles
+        localStorage.setItem('pageArticles', JSON.stringify(defaultArticles));
+        // Reload
+        return loadArticles();
+      }
+      
+      // Display articles with edit controls
+      articles.forEach(article => {
+        // Set default image dimensions if not present
+        if (!article.imageWidth) article.imageWidth = 200;
+        if (!article.imageHeight) article.imageHeight = 'auto';
+        
+        const section = document.createElement('section');
+        section.className = 'article';
+        section.id = article.id;
+        
+        const content = `
+          <div class="article-text">
+            <h2>${article.title}</h2>
+            <button class="edit-button" onclick="editArticleTitle('${article.id}')">Edit Title</button>
+            <div class="article-content">
+              ${article.content}
+            </div>
+            <button class="edit-button edit-content-button" onclick="editArticleContent('${article.id}')">Edit Content</button>
+          </div>
+          <div class="article-image">
+            <img src="${article.imageSrc}" alt="${article.imageAlt}" style="width: ${article.imageWidth}px; height: ${article.imageHeight === 'auto' ? 'auto' : article.imageHeight + 'px'};">
+            <div class="image-buttons">
+              <button class="edit-button" onclick="editArticleImage('${article.id}')">Change Image</button>
+              <button class="edit-button" onclick="resizeArticleImage('${article.id}')">Resize Image</button>
+            </div>
+          </div>
+          <div class="article-actions">
+            <button class="delete-button" onclick="deleteArticle('${article.id}')">Delete Article</button>
+          </div>
+        `;
+        
+        section.innerHTML = content;
+        container.appendChild(section);
+      });
+    }
+
+    function editArticleTitle(articleId) {
+      const articles = JSON.parse(localStorage.getItem('pageArticles') || '[]');
+      const article = articles.find(a => a.id === articleId);
+      
+      if (article) {
+        const newTitle = prompt("Edit article title", article.title);
+        if (newTitle && newTitle.trim() !== '') {
+          article.title = newTitle;
+          localStorage.setItem('pageArticles', JSON.stringify(articles));
+          loadArticles(); // Refresh the display
+        }
+      }
+    }
+
+    function editArticleContent(articleId) {
+      const articles = JSON.parse(localStorage.getItem('pageArticles') || '[]');
+      const article = articles.find(a => a.id === articleId);
+      
+      if (article) {
+        // Creating a textarea for multiline editing
+        const textarea = document.createElement('textarea');
+        // Poista HTML-tagit ja muuta tekstiksi
+        const contentText = article.content
+          .replace(/<br>/g, '\n')
+          .replace(/<\/p><p>/g, '\n\n')
+          .replace(/<[^>]*>/g, '')
+          .trim();
+        
+        textarea.value = contentText;
+        textarea.style.width = '100%';
+        textarea.style.height = '300px';
+        textarea.style.padding = '10px';
+        
+        const modal = document.createElement('div');
+        modal.className = 'edit-modal';
+        modal.innerHTML = `
+          <div class="edit-modal-content">
+            <h3>Edit Article Content</h3>
+            <div id="editor-container"></div>
+            <div class="editor-actions">
+              <button class="save-button" id="save-content">Save Changes</button>
+              <button class="cancel-button" id="cancel-edit">Cancel</button>
+            </div>
+          </div>
+        `;
+        
+        document.body.appendChild(modal);
+        document.getElementById('editor-container').appendChild(textarea);
+        
+        document.getElementById('save-content').addEventListener('click', function() {
+          const newContent = textarea.value;
+          if (newContent && newContent.trim() !== '') {
+            // Convert plain text to HTML paragraphs
+            const paragraphs = newContent.split('\n\n');
+            const htmlContent = paragraphs.map(p => {
+              const lines = p.split('\n');
+              return '<p>' + lines.join('<br>') + '</p>';
+            }).join('');
+            
+            article.content = htmlContent;
+            localStorage.setItem('pageArticles', JSON.stringify(articles));
+            modal.remove();
+            loadArticles(); // Refresh the display
+          }
+        });
+        
+        document.getElementById('cancel-edit').addEventListener('click', function() {
+          modal.remove();
+        });
+      }
+    }
+
+    function editArticleImage(articleId) {
+      const articles = JSON.parse(localStorage.getItem('pageArticles') || '[]');
+      const article = articles.find(a => a.id === articleId);
+      
+      if (article) {
+        // Display image upload form
+        const modal = document.createElement('div');
+        modal.className = 'edit-modal';
+        modal.innerHTML = `
+          <div class="edit-modal-content">
+            <h3>Change Article Image</h3>
+            <div class="image-upload">
+              <p>Current image: ${article.imageSrc}</p>
+              <input type="text" id="image-src" placeholder="Image path (e.g., images/cat1.jpg)" value="${article.imageSrc}">
+              <input type="text" id="image-alt" placeholder="Image description" value="${article.imageAlt}">
+            </div>
+            <div class="editor-actions">
+              <button class="save-button" id="save-image">Save Changes</button>
+              <button class="cancel-button" id="cancel-image">Cancel</button>
+            </div>
+          </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        document.getElementById('save-image').addEventListener('click', function() {
+          const newSrc = document.getElementById('image-src').value;
+          const newAlt = document.getElementById('image-alt').value;
+          
+          if (newSrc && newSrc.trim() !== '') {
+            article.imageSrc = newSrc;
+            article.imageAlt = newAlt || 'Article image';
+            localStorage.setItem('pageArticles', JSON.stringify(articles));
+            modal.remove();
+            loadArticles(); // Refresh the display
+          }
+        });
+        
+        document.getElementById('cancel-image').addEventListener('click', function() {
+          modal.remove();
+        });
+      }
+    }
+    
+    // New function for resizing article image
+    function resizeArticleImage(articleId) {
+      const articles = JSON.parse(localStorage.getItem('pageArticles') || '[]');
+      const article = articles.find(a => a.id === articleId);
+      
+      if (article) {
+        // Display image resize form
+        const modal = document.createElement('div');
+        modal.className = 'edit-modal';
+        modal.innerHTML = `
+          <div class="edit-modal-content">
+            <h3>Resize Article Image</h3>
+            <div class="image-upload">
+              <p>Current image size: ${article.imageWidth}px width, ${article.imageHeight === 'auto' ? 'auto' : article.imageHeight + 'px'} height</p>
+              <div style="margin-bottom: 15px;">
+                <label for="image-width" style="display: block; margin-bottom: 5px;">Width (px):</label>
+                <input type="number" id="image-width" placeholder="Width in pixels" value="${article.imageWidth}" style="width: 100%; padding: 8px;">
+              </div>
+              <div>
+                <label for="image-height" style="display: block; margin-bottom: 5px;">Height:</label>
+                <select id="image-height-type" style="width: 100%; padding: 8px; margin-bottom: 8px;">
+                  <option value="auto" ${article.imageHeight === 'auto' ? 'selected' : ''}>Auto (maintain proportion)</option>
+                  <option value="custom" ${article.imageHeight !== 'auto' ? 'selected' : ''}>Custom</option>
+                </select>
+                <input type="number" id="image-height" placeholder="Height in pixels" value="${article.imageHeight !== 'auto' ? article.imageHeight : ''}" style="width: 100%; padding: 8px; ${article.imageHeight === 'auto' ? 'display: none;' : ''}">
+              </div>
+            </div>
+            <div class="editor-actions">
+              <button class="save-button" id="save-resize">Save Changes</button>
+              <button class="cancel-button" id="cancel-resize">Cancel</button>
+            </div>
+          </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Toggle height input based on selection
+        document.getElementById('image-height-type').addEventListener('change', function() {
+          const heightInput = document.getElementById('image-height');
+          if (this.value === 'auto') {
+            heightInput.style.display = 'none';
+          } else {
+            heightInput.style.display = 'block';
+          }
+        });
+        
+        document.getElementById('save-resize').addEventListener('click', function() {
+          const newWidth = document.getElementById('image-width').value;
+          const heightType = document.getElementById('image-height-type').value;
+          const newHeight = heightType === 'auto' ? 'auto' : document.getElementById('image-height').value;
+          
+          if (newWidth && parseInt(newWidth) > 0) {
+            article.imageWidth = parseInt(newWidth);
+            article.imageHeight = heightType === 'auto' ? 'auto' : (parseInt(newHeight) > 0 ? parseInt(newHeight) : 'auto');
+            localStorage.setItem('pageArticles', JSON.stringify(articles));
+            modal.remove();
+            loadArticles(); // Refresh the display
+          } else {
+            alert("Width must be a positive number");
+          }
+        });
+        
+        document.getElementById('cancel-resize').addEventListener('click', function() {
+          modal.remove();
+        });
+      }
+    }
+
+    function deleteArticle(articleId) {
+      if (confirm("Are you sure you want to delete this article?")) {
+        let articles = JSON.parse(localStorage.getItem('pageArticles') || '[]');
+        articles = articles.filter(a => a.id !== articleId);
+        localStorage.setItem('pageArticles', JSON.stringify(articles));
+        loadArticles(); // Refresh the display
+      }
+    }
+
+    function addNewArticle() {
+      const articles = JSON.parse(localStorage.getItem('pageArticles') || '[]');
+      const newId = 'article' + (Date.now().toString()); // Käytetään aikaleimaa ID:nä
+      
+      const newArticle = {
+        id: newId,
+        title: 'New Article Title',
+        content: '<p>Enter your article content here.</p>',
+        imageSrc: 'images/placeholder.jpg',
+        imageAlt: 'Placeholder image',
+        imageWidth: 200,
+        imageHeight: 'auto'
+      };
+      
+      articles.push(newArticle);
+      localStorage.setItem('pageArticles', JSON.stringify(articles));
+      loadArticles(); // Refresh articles
+      
+      // Automatically open the edit dialog
+      setTimeout(() => {
+        editArticleTitle(newId);
+      }, 100);
+      
+      // Scroll to the new article
+      setTimeout(() => {
+        const newArticleElement = document.getElementById(newId);
+        if (newArticleElement) {
+          newArticleElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 200);
     }
 
     // Social media link management functions
@@ -255,6 +537,10 @@
           <label for="editLinkText" style="display: block; margin-bottom: 5px;">Link Text:</label>
           <input type="text" id="editLinkText" value="${linkToEdit.text}" style="width: 100%; padding: 5px;">
         </div>
+        <div style
+        <label for="editLinkText" style="display: block; margin-bottom: 5px;">Link Text:</label>
+          <input type="text" id="editLinkText" value="${linkToEdit.text}" style="width: 100%; padding: 5px;">
+        </div>
         <div style="margin-bottom: 10px;">
           <label for="editLinkUrl" style="display: block; margin-bottom: 5px;">Link URL:</label>
           <input type="text" id="editLinkUrl" value="${linkToEdit.url}" style="width: 100%; padding: 5px;">
@@ -339,6 +625,7 @@
       }
 
       loadLinks();  // Load and display links
+      loadArticles(); // Load and display articles with edit controls
     });
   </script>
 
