@@ -5,6 +5,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Pet Adoption</title>
   <link rel="stylesheet" href="styles.css"/>
+  <!-- Add responsive image styles inline to ensure they apply properly -->
+  <style>
+    /* Improved image container styles */
+    .article-image {
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* Center images horizontally by default */
+      max-width: 40%; /* Prevent image container from taking too much space */
+      margin-left: 20px;
+    }
+    
+    .article-image img {
+      max-width: 100%; /* Ensure image doesn't overflow its container */
+      height: auto; /* Maintain aspect ratio by default */
+      object-fit: contain; /* Ensures the entire image is visible */
+      object-position: center; /* Centers the image */
+      border: 2px solid #000;
+      border-radius: 8px;
+    }
+
+    /* Ensure article layout is flexible */
+    .article {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      border: 2px solid #999;
+      padding: 20px;
+      margin-bottom: 30px;
+      gap: 20px;
+    }
+
+    .article-text {
+      flex: 2;
+      min-width: 300px; /* Minimum width for text content */
+    }
+
+    /* Alignment classes for images */
+    .align-left {
+      align-items: flex-start;
+    }
+    
+    .align-right {
+      align-items: flex-end;
+    }
+    
+    .align-center {
+      align-items: center;
+    }
+
+    /* Responsive design for smaller screens */
+    @media (max-width: 768px) {
+      .article {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .article-image {
+        margin-left: 0;
+        margin-top: 20px;
+        max-width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -17,12 +81,13 @@
         <li><a href="index.html">Home</a></li>
         <li><a href="#">About</a></li>
         <li><a href="#">Blog</a></li>
+        <li><a href="admin.html">Admin</a></li>
       </ul>
     </nav>
   </div>
 
   <main class="articles" id="articlesContainer">
-    <!-- Artikkeliosiot lisätään tähän dynaamisesti -->
+    <!-- Articles will be loaded here dynamically -->
   </main>
   
   <!-- Footer Section -->
@@ -51,16 +116,16 @@
   </footer>
 
   <script>
-    // Artikkelien lataus ja näyttäminen
+    // Load and display articles
     function loadArticles() {
       const container = document.getElementById('articlesContainer');
       const articles = JSON.parse(localStorage.getItem('pageArticles') || '[]');
       
-      // Tyhjennä ensin container
+      // Clear container first
       container.innerHTML = '';
       
       if (articles.length === 0) {
-        // Jos ei ole artikkeleita, näytetään esimerkkisisältö
+        // If no articles, show sample content
         const defaultArticles = [
           {
             id: 'article1',
@@ -93,7 +158,8 @@
             imageSrc: 'images/dog1.jpg',
             imageAlt: 'Cute dog',
             imageWidth: 200,
-            imageHeight: 'auto'
+            imageHeight: 'auto',
+            imageAlignment: 'center'
           },
           {
             id: 'article2',
@@ -124,33 +190,40 @@
             imageSrc: 'images/cat1.jpg',
             imageAlt: 'Cute cat',
             imageWidth: 200,
-            imageHeight: 'auto'
+            imageHeight: 'auto',
+            imageAlignment: 'center'
           }
         ];
         
-        // Tallenna oletusartikkelit
+        // Save default articles
         localStorage.setItem('pageArticles', JSON.stringify(defaultArticles));
-        // Lataa uudelleen
+        // Reload
         return loadArticles();
       }
       
-      // Näytä artikkelit
+      // Display articles
       articles.forEach(article => {
-        // Aseta oletusarvot kuvan koolle jos ne puuttuvat
+        // Set default image dimensions if not present
         if (!article.imageWidth) article.imageWidth = 200;
         if (!article.imageHeight) article.imageHeight = 'auto';
+        if (!article.imageAlignment) article.imageAlignment = 'center';
         
         const section = document.createElement('section');
         section.className = 'article';
         section.id = article.id;
         
+        // Create article content with proper image styling
         const content = `
           <div class="article-text">
             <h2>${article.title}</h2>
             ${article.content}
           </div>
-          <div class="article-image">
-            <img src="${article.imageSrc}" alt="${article.imageAlt}" style="width: ${article.imageWidth}px; height: ${article.imageHeight === 'auto' ? 'auto' : article.imageHeight + 'px'};">
+          <div class="article-image align-${article.imageAlignment}">
+            <img 
+              src="${article.imageSrc}" 
+              alt="${article.imageAlt}" 
+              style="width: ${article.imageWidth}px; height: ${article.imageHeight === 'auto' ? 'auto' : article.imageHeight + 'px'};"
+            >
           </div>
         `;
         
@@ -159,7 +232,21 @@
       });
     }
 
-    // Lataa tallennetut tiedot kun sivu latautuu
+    // Load social media links
+    function loadLinks() {
+      const linksContainer = document.getElementById('linksContainer');
+      const storedLinks = JSON.parse(localStorage.getItem('socialLinks') || '[]');
+      linksContainer.innerHTML = '';
+      
+      storedLinks.forEach(link => {
+        const div = document.createElement('div');
+        div.className = 'link-row';
+        div.innerHTML = `<a href="${link.url}" target="_blank" style="color: blue;">${link.text}</a>`;
+        linksContainer.appendChild(div);
+      });
+    }
+
+    // Load saved data when the page loads
     window.addEventListener('DOMContentLoaded', () => {
       const storedLogo = localStorage.getItem('logoText');
       if (storedLogo) {
@@ -181,22 +268,9 @@
         document.getElementById('companyName').textContent = storedCompanyName;
       }
 
-      loadLinks();  // Lataa ja näytä linkit
-      loadArticles(); // Lataa ja näytä artikkelit
+      loadLinks();  // Load and display links
+      loadArticles(); // Load and display articles
     });
-
-    // Lataa ja näytä linkit
-    function loadLinks() {
-      const linksContainer = document.getElementById('linksContainer');
-      const storedLinks = JSON.parse(localStorage.getItem('socialLinks') || '[]');
-      linksContainer.innerHTML = '';
-      storedLinks.forEach(link => {
-        const div = document.createElement('div');
-        div.className = 'link-row';
-        div.innerHTML = `<a href="${link.url}" target="_blank" style="color: blue;">${link.text}</a>`;
-        linksContainer.appendChild(div);
-      });
-    }
   </script>
 
 </body>

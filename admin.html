@@ -5,6 +5,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CMS Admin</title>
   <link rel="stylesheet" href="styles.css"/>
+  <style>
+    /* Added styles for image container */
+    .article-image {
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* Center images horizontally */
+      margin-left: 20px;
+      max-width: 40%; /* Prevent image container from taking too much space */
+      overflow: hidden; /* Prevents overflow */
+    }
+    
+    .article-image img {
+      max-width: 100%; /* Ensure image doesn't overflow its container */
+      height: auto; /* Maintain aspect ratio by default */
+      object-fit: contain; /* Ensures the entire image is visible */
+      object-position: center; /* Centers the image */
+    }
+
+    /* Ensure article layout is flexible */
+    .article {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .article-text {
+      flex: 1;
+      min-width: 300px; /* Minimum width for text content */
+    }
+
+    /* Responsive design for smaller screens */
+    @media (max-width: 768px) {
+      .article {
+        flex-direction: column;
+      }
+      
+      .article-image {
+        margin-left: 0;
+        margin-top: 20px;
+        max-width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -192,6 +238,7 @@
         section.className = 'article';
         section.id = article.id;
         
+        // Updated template with improved image styling
         const content = `
           <div class="article-text">
             <h2>${article.title}</h2>
@@ -202,7 +249,11 @@
             <button class="edit-button edit-content-button" onclick="editArticleContent('${article.id}')">Edit Content</button>
           </div>
           <div class="article-image">
-            <img src="${article.imageSrc}" alt="${article.imageAlt}" style="width: ${article.imageWidth}px; height: ${article.imageHeight === 'auto' ? 'auto' : article.imageHeight + 'px'};">
+            <img 
+              src="${article.imageSrc}" 
+              alt="${article.imageAlt}" 
+              style="width: ${article.imageWidth}px; height: ${article.imageHeight === 'auto' ? 'auto' : article.imageHeight + 'px'};"
+            >
             <div class="image-buttons">
               <button class="edit-button" onclick="editArticleImage('${article.id}')">Change Image</button>
               <button class="edit-button" onclick="resizeArticleImage('${article.id}')">Resize Image</button>
@@ -334,7 +385,7 @@
       }
     }
     
-    // New function for resizing article image
+    // Modified function for resizing article image
     function resizeArticleImage(articleId) {
       const articles = JSON.parse(localStorage.getItem('pageArticles') || '[]');
       const article = articles.find(a => a.id === articleId);
@@ -360,6 +411,14 @@
                 </select>
                 <input type="number" id="image-height" placeholder="Height in pixels" value="${article.imageHeight !== 'auto' ? article.imageHeight : ''}" style="width: 100%; padding: 8px; ${article.imageHeight === 'auto' ? 'display: none;' : ''}">
               </div>
+              <div style="margin-top: 15px;">
+                <label for="image-alignment" style="display: block; margin-bottom: 5px;">Image Alignment:</label>
+                <select id="image-alignment" style="width: 100%; padding: 8px;">
+                  <option value="center">Center</option>
+                  <option value="right">Right</option>
+                  <option value="left">Left</option>
+                </select>
+              </div>
             </div>
             <div class="editor-actions">
               <button class="save-button" id="save-resize">Save Changes</button>
@@ -384,13 +443,43 @@
           const newWidth = document.getElementById('image-width').value;
           const heightType = document.getElementById('image-height-type').value;
           const newHeight = heightType === 'auto' ? 'auto' : document.getElementById('image-height').value;
+          const alignment = document.getElementById('image-alignment').value;
           
           if (newWidth && parseInt(newWidth) > 0) {
             article.imageWidth = parseInt(newWidth);
             article.imageHeight = heightType === 'auto' ? 'auto' : (parseInt(newHeight) > 0 ? parseInt(newHeight) : 'auto');
+            
+            // Add alignment property to the article object
+            article.imageAlignment = alignment;
+            
             localStorage.setItem('pageArticles', JSON.stringify(articles));
             modal.remove();
             loadArticles(); // Refresh the display
+            
+            // Apply alignment styles after the article is loaded
+            setTimeout(() => {
+              const imgContainer = document.querySelector(`#${articleId} .article-image`);
+              if (imgContainer) {
+                // Remove any existing alignment classes
+                imgContainer.classList.remove('align-center', 'align-right', 'align-left');
+                
+                // Add the new alignment class
+                imgContainer.classList.add(`align-${alignment}`);
+                
+                // Apply alignment-specific styles
+                switch(alignment) {
+                  case 'right':
+                    imgContainer.style.alignItems = 'flex-end';
+                    break;
+                  case 'left':
+                    imgContainer.style.alignItems = 'flex-start';
+                    break;
+                  default: // center
+                    imgContainer.style.alignItems = 'center';
+                    break;
+                }
+              }
+            }, 100);
           } else {
             alert("Width must be a positive number");
           }
@@ -422,7 +511,8 @@
         imageSrc: 'images/placeholder.jpg',
         imageAlt: 'Placeholder image',
         imageWidth: 200,
-        imageHeight: 'auto'
+        imageHeight: 'auto',
+        imageAlignment: 'center' // Default alignment
       };
       
       articles.push(newArticle);
@@ -537,10 +627,6 @@
           <label for="editLinkText" style="display: block; margin-bottom: 5px;">Link Text:</label>
           <input type="text" id="editLinkText" value="${linkToEdit.text}" style="width: 100%; padding: 5px;">
         </div>
-        <div style
-        <label for="editLinkText" style="display: block; margin-bottom: 5px;">Link Text:</label>
-          <input type="text" id="editLinkText" value="${linkToEdit.text}" style="width: 100%; padding: 5px;">
-        </div>
         <div style="margin-bottom: 10px;">
           <label for="editLinkUrl" style="display: block; margin-bottom: 5px;">Link URL:</label>
           <input type="text" id="editLinkUrl" value="${linkToEdit.url}" style="width: 100%; padding: 5px;">
@@ -602,6 +688,37 @@
       }
     }
 
+    // Apply alignment when loading articles
+    function applyArticleStyles() {
+      const articles = JSON.parse(localStorage.getItem('pageArticles') || '[]');
+      
+      articles.forEach(article => {
+        if (article.imageAlignment) {
+          const imgContainer = document.querySelector(`#${article.id} .article-image`);
+          if (imgContainer) {
+            // Remove any existing alignment classes
+            imgContainer.classList.remove('align-center', 'align-right', 'align-left');
+            
+            // Add the new alignment class
+            imgContainer.classList.add(`align-${article.imageAlignment}`);
+            
+            // Apply alignment-specific styles
+            switch(article.imageAlignment) {
+              case 'right':
+                imgContainer.style.alignItems = 'flex-end';
+                break;
+              case 'left':
+                imgContainer.style.alignItems = 'flex-start';
+                break;
+              default: // center
+                imgContainer.style.alignItems = 'center';
+                break;
+            }
+          }
+        }
+      });
+    }
+
     // Load saved data when the page loads
     window.addEventListener('DOMContentLoaded', () => {
       const storedLogo = localStorage.getItem('logoText');
@@ -626,6 +743,9 @@
 
       loadLinks();  // Load and display links
       loadArticles(); // Load and display articles with edit controls
+      
+      // Apply stored image alignments after articles are loaded
+      setTimeout(applyArticleStyles, 100);
     });
   </script>
 
