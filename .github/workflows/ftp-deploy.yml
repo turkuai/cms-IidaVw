@@ -1,5 +1,7 @@
-on: push
-name: 🚀 Deploy website on push
+on: 
+  push:
+    branches: [ server ]  # Käynnistyy vain server-haaran muutoksista
+name: 🚀 Deploy to School FTP Server
 jobs:
   web-deploy:
     name: 🎉 Deploy
@@ -7,6 +9,8 @@ jobs:
     steps:
     - name: 🚚 Get latest code
       uses: actions/checkout@v4
+      with:
+        ref: server  # Varmistetaan että käytetään server-haaraa
     
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -14,4 +18,6 @@ jobs:
         server: 194.197.245.5
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: ./cms/
+        local-dir: ./  # Hakemisto, josta tiedostot lähetetään
+        server-dir: /  # Kokeile juurihakemistoa
+        log-level: verbose
