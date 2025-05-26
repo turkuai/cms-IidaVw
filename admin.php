@@ -5,30 +5,113 @@ session_start();
 // Sisällytetään tietokantafunktiot
 require_once 'database.php';
 
-// Funktio mallipohjan tarkistamiseen
-function checkArticleTemplate($title) {
-    $titleLower = strtolower(trim($title));
+// Funktio JSON-tiedostojen synkronointiin
+function syncToJsonFiles() {
+    // Varmista data-hakemiston olemassaolo
+    if (!file_exists('data/')) {
+        mkdir('data/', 0755, true);
+    }
     
-    // Sunny-mallipohja
-    if (strpos($titleLower, "sunny") !== false || 
-        strpos($titleLower, "golden ray") !== false || 
-        strpos($titleLower, "meet sunny") !== false) {
-        
-        // Tarkista onko vastaavaa artikkelia jo olemassa
-        $existingSections = getAllSections();
-        $exists = false;
-        foreach ($existingSections as $section) {
-            if (strpos(strtolower($section['title']), "sunny") !== false || 
-                strpos(strtolower($section['title']), "golden ray") !== false) {
-                $exists = true;
-                break;
-            }
-        }
-        
-        if (!$exists) {
-            return [
-                'title' => 'Meet Sunny – A Golden Ray of Joy!',
-                'content' => '<p>
+    // Synkronoi logo
+    $logoData = ['logoText' => $_SESSION['logoText'] ?? 'LOGO'];
+    file_put_contents('data/logo.json', json_encode($logoData, JSON_PRETTY_PRINT));
+    
+    // Synkronoi footer-tiedot
+    $footerData = [
+        'footerTitle' => $_SESSION['footerTitle'] ?? "Your Company's Footer Title",
+        'footerNote' => $_SESSION['footerNote'] ?? 'Lorem ipsum dolor sit amet',
+        'companyName' => $_SESSION['companyName'] ?? "Company's name"
+    ];
+    file_put_contents('data/footer.json', json_encode($footerData, JSON_PRETTY_PRINT));
+    
+    // Synkronoi artikkelit tietokannasta JSON:iin
+    $sections = getAllSections();
+    $articles = [];
+    
+    foreach ($sections as $section) {
+        $articles[] = [
+            'id' => 'section-' . $section['id'],
+            'title' => $section['title'],
+            'content' => $section['content'],
+            'imageSrc' => $section['image_url'],
+            'imageAlt' => 'Article image',
+            'imageWidth' => 200,
+            'imageHeight' => 'auto',
+            'imageAlignment' => 'center'
+        ];
+    }
+    
+    $articlesData = [
+        'articles' => $articles,
+        'lastUpdated' => date('Y-m-d H:i:s')
+    ];
+    file_put_contents('data/articles.json', json_encode($articlesData, JSON_PRETTY_PRINT));
+    
+    // Synkronoi linkit tietokannasta JSON:iin
+    $links = getAllLinks();
+    $socialLinks = [];
+    
+    foreach ($links as $link) {
+        $socialLinks[] = [
+            'text' => $link['display_text'],
+            'url' => $link['url']
+        ];
+    }
+    
+    $linksData = [
+        'links' => $socialLinks,
+        'lastUpdated' => date('Y-m-d H:i:s')
+    ];
+    file_put_contents('data/social_links.json', json_encode($linksData, JSON_PRETTY_PRINT));
+}
+
+// Käsittele AJAX-pyynnöt
+if (isset($_POST['ajax_action'])) {
+    header('Content-Type: application/json');
+    
+    $action = $_POST['ajax_action'];
+    $response = ['success' => false, 'message' => ''];
+    
+    switch ($action) {
+        case 'edit_logo':
+            $_SESSION['logoText'] = $_POST['logoText'] ?? 'LOGO';
+            syncToJsonFiles(); // Synkronoi JSON-tiedostoon
+            $response = ['success' => true, 'message' => 'Logo updated'];
+            break;
+            
+        case 'edit_footer_title':
+            $_SESSION['footerTitle'] = $_POST['footerTitle'] ?? "Your Company's Footer Title";
+            syncToJsonFiles(); // Synkronoi JSON-tiedostoon
+            $response = ['success' => true, 'message' => 'Footer title updated'];
+            break;
+            
+        case 'edit_footer_note':
+            $_SESSION['footerNote'] = $_POST['footerNote'] ?? '';
+            syncToJsonFiles(); // Synkronoi JSON-tiedostoon
+            $response = ['success' => true, 'message' => 'Footer note updated'];
+            break;
+            
+        case 'edit_company_name':
+            $_SESSION['companyName'] = $_POST['companyName'] ?? "Company's name";
+            syncToJsonFiles(); // Synkronoi JSON-tiedostoon
+            $response = ['success' => true, 'message' => 'Company name updated'];
+            break;
+            
+        case 'add_article':
+            $title = $_POST['title'] ?? 'New Article';
+            $content = $_POST['content'] ?? '<p>Enter your article content here.</p>';
+            $imageUrl = $_POST['image_url'] ?? 'images/placeholder.jpg';
+            
+            // Tarkista mallipohjat
+            $titleLower = strtolower(trim($title));
+            
+            // Sunny-mallipohja
+            if (strpos($titleLower, "sunny") !== false || 
+                strpos($titleLower, "golden ray") !== false || 
+                strpos($titleLower, "meet sunny") !== false) {
+                
+                $title = 'Meet Sunny – A Golden Ray of Joy!';
+                $content = '<p>
                   <strong>Name:</strong> Sunny<br>
                   <strong>Breed:</strong> Golden Retriever<br>
                   <strong>Color:</strong> Golden<br>
@@ -52,37 +135,17 @@ function checkArticleTemplate($title) {
                 </p>
                 <p>
                   👉 Think Sunny might be your perfect match? Apply now to adopt and give her the loving home she deserves!
-                </p>',
-                'image_url' => 'images/dog1.jpg',
-                'imageAlt' => 'Cute dog',
-                'imageWidth' => 200,
-                'imageHeight' => 'auto',
-                'imageAlignment' => 'center',
-                'message' => 'Sunny-mallipohja tunnistettu! Artikkeli täytetty alkuperäisellä Sunny-sisällöllä.'
-            ];
-        }
-    }
-    
-    // Pumpkin-mallipohja
-    else if (strpos($titleLower, "pumpkin") !== false || 
-             strpos($titleLower, "furry friend") !== false || 
-             strpos($titleLower, "meet pumpkin") !== false) {
-        
-        // Tarkista onko vastaavaa artikkelia jo olemassa
-        $existingSections = getAllSections();
-        $exists = false;
-        foreach ($existingSections as $section) {
-            if (strpos(strtolower($section['title']), "pumpkin") !== false || 
-                strpos(strtolower($section['title']), "furry friend") !== false) {
-                $exists = true;
-                break;
+                </p>';
+                $imageUrl = 'images/dog1.jpg';
             }
-        }
-        
-        if (!$exists) {
-            return [
-                'title' => 'Meet Pumpkin – Your Future Furry Friend!',
-                'content' => '<p>
+            
+            // Pumpkin-mallipohja
+            else if (strpos($titleLower, "pumpkin") !== false || 
+                     strpos($titleLower, "furry friend") !== false || 
+                     strpos($titleLower, "meet pumpkin") !== false) {
+                
+                $title = 'Meet Pumpkin – Your Future Furry Friend!';
+                $content = '<p>
                   <strong>Name:</strong> Pumpkin<br>
                   <strong>Breed:</strong> Domestic Longhair<br>
                   <strong>Color:</strong> Orange<br>
@@ -104,192 +167,137 @@ function checkArticleTemplate($title) {
                 </p>
                 <p>
                   👉 Ready to adopt Pumpkin? Fill out an application on our website and give this lovable cat the home he deserves.
-                </p>',
-                'image_url' => 'images/cat1.jpg',
-                'imageAlt' => 'Cute cat',
-                'imageWidth' => 200,
-                'imageHeight' => 'auto',
-                'imageAlignment' => 'center',
-                'message' => 'Pumpkin-mallipohja tunnistettu! Artikkeli täytetty alkuperäisellä Pumpkin-sisällöllä.'
-            ];
-        }
+                </p>';
+                $imageUrl = 'images/cat1.jpg';
+            }
+            
+            $result = addSection($title, $content, $imageUrl);
+            if ($result) {
+                syncToJsonFiles(); // Synkronoi JSON-tiedostoon
+                $response = ['success' => true, 'message' => 'Article added', 'redirect' => true];
+            } else {
+                $response = ['success' => false, 'message' => 'Failed to add article'];
+            }
+            break;
+            
+        case 'edit_article_title':
+            $sectionId = (int)($_POST['section_id'] ?? 0);
+            $title = $_POST['title'] ?? '';
+            
+            if ($sectionId > 0 && $title) {
+                $result = updateSectionTitle($sectionId, $title);
+                if ($result) {
+                    syncToJsonFiles(); // Synkronoi JSON-tiedostoon
+                }
+                $response = ['success' => $result, 'message' => $result ? 'Title updated' : 'Failed to update title'];
+            }
+            break;
+            
+        case 'edit_article_content':
+            $sectionId = (int)($_POST['section_id'] ?? 0);
+            $content = $_POST['content'] ?? '';
+            
+            if ($sectionId > 0 && $content) {
+                $result = updateSectionContent($sectionId, $content);
+                if ($result) {
+                    syncToJsonFiles(); // Synkronoi JSON-tiedostoon
+                }
+                $response = ['success' => $result, 'message' => $result ? 'Content updated' : 'Failed to update content'];
+            }
+            break;
+            
+        case 'edit_article_image':
+            $sectionId = (int)($_POST['section_id'] ?? 0);
+            $imageUrl = $_POST['image_url'] ?? '';
+            
+            if ($sectionId > 0 && $imageUrl) {
+                $result = updateSectionImage($sectionId, $imageUrl);
+                if ($result) {
+                    syncToJsonFiles(); // Synkronoi JSON-tiedostoon
+                }
+                $response = ['success' => $result, 'message' => $result ? 'Image updated' : 'Failed to update image'];
+            }
+            break;
+            
+        case 'delete_article':
+            $sectionId = (int)($_POST['section_id'] ?? 0);
+            
+            if ($sectionId > 0) {
+                $result = deleteSection($sectionId);
+                if ($result) {
+                    syncToJsonFiles(); // Synkronoi JSON-tiedostoon
+                }
+                $response = ['success' => $result, 'message' => $result ? 'Article deleted' : 'Failed to delete article', 'redirect' => true];
+            }
+            break;
+            
+        case 'add_link':
+            $linkText = $_POST['link_text'] ?? '';
+            $linkUrl = $_POST['link_url'] ?? '';
+            
+            if ($linkText && $linkUrl) {
+                $result = addLink($linkText, $linkUrl);
+                if ($result) {
+                    syncToJsonFiles(); // Synkronoi JSON-tiedostoon
+                }
+                $response = ['success' => $result, 'message' => $result ? 'Link added' : 'Failed to add link', 'redirect' => true];
+            }
+            break;
+            
+        case 'edit_link':
+            $linkId = (int)($_POST['link_id'] ?? 0);
+            $linkText = $_POST['link_text'] ?? '';
+            $linkUrl = $_POST['link_url'] ?? '';
+            
+            if ($linkId > 0 && $linkText && $linkUrl) {
+                $result = updateLink($linkId, $linkText, $linkUrl);
+                if ($result) {
+                    syncToJsonFiles(); // Synkronoi JSON-tiedostoon
+                }
+                $response = ['success' => $result, 'message' => $result ? 'Link updated' : 'Failed to update link', 'redirect' => true];
+            }
+            break;
+            
+        case 'delete_link':
+            $linkId = (int)($_POST['link_id'] ?? 0);
+            
+            if ($linkId > 0) {
+                $result = deleteLink($linkId);
+                if ($result) {
+                    syncToJsonFiles(); // Synkronoi JSON-tiedostoon
+                }
+                $response = ['success' => $result, 'message' => $result ? 'Link deleted' : 'Failed to delete link', 'redirect' => true];
+            }
+            break;
     }
     
-    // Ei tunnistettu mallipohjaa
-    return null;
+    echo json_encode($response);
+    exit;
 }
 
-// Määrittele simplifioidut header ja footer -funktiot
-function displayHeader() {
-    ?>
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-      <title>CMS Admin</title>
-      <link rel="stylesheet" href="styles.css"/>
-      <style>
-        /* Added styles for image container */
-        .article-image {
-          display: flex;
-          flex-direction: column;
-          align-items: center; /* Center images horizontally */
-          margin-left: 20px;
-          max-width: 40%; /* Prevent image container from taking too much space */
-          overflow: hidden; /* Prevents overflow */
-        }
-        
-        .article-image img {
-          max-width: 100%; /* Ensure image doesn't overflow its container */
-          height: auto; /* Maintain aspect ratio by default */
-          object-fit: contain; /* Ensures the entire image is visible */
-          object-position: center; /* Centers the image */
-        }
-    
-        /* Ensure article layout is flexible */
-        .article {
-          display: flex;
-          flex-wrap: wrap;
-          margin-bottom: 30px;
-          padding: 20px;
-          border: 1px solid #ddd;
-          border-radius: 5px;
-        }
-    
-        .article-text {
-          flex: 1;
-          min-width: 300px; /* Minimum width for text content */
-        }
-    
-        /* Alignment classes for images */
-        .align-left {
-          align-items: flex-start;
-        }
-        
-        .align-right {
-          align-items: flex-end;
-        }
-        
-        .align-center {
-          align-items: center;
-        }
-    
-        /* Responsive design for smaller screens */
-        @media (max-width: 768px) {
-          .article {
-            flex-direction: column;
-          }
-          
-          .article-image {
-            margin-left: 0;
-            margin-top: 20px;
-            max-width: 100%;
-          }
-        }
-
-        /* Form styling */
-        .edit-form-container {
-          max-width: 800px;
-          margin: 20px auto;
-          padding: 20px;
-          border: 1px solid #ddd;
-          border-radius: 5px;
-        }
-        
-        .form-group {
-          margin-bottom: 15px;
-        }
-        
-        .form-group label {
-          display: block;
-          margin-bottom: 5px;
-          font-weight: bold;
-        }
-        
-        .form-group input[type="text"],
-        .form-group textarea {
-          width: 100%;
-          padding: 8px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-        }
-        
-        .form-buttons {
-          margin-top: 20px;
-        }
-        
-        .save-button, .cancel-button, .delete-button {
-          padding: 8px 16px;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          margin-right: 10px;
-        }
-        
-        .save-button {
-          background-color: #4CAF50;
-          color: white;
-        }
-        
-        .cancel-button {
-          background-color: #f1f1f1;
-          color: #333;
-          text-decoration: none;
-          display: inline-block;
-        }
-        
-        .delete-button {
-          background-color: #f44336;
-          color: white;
-        }
-        
-        /* Confirmation dialog */
-        .confirmation-dialog {
-          max-width: 500px;
-          margin: 100px auto;
-          padding: 20px;
-          border: 1px solid #ddd;
-          border-radius: 5px;
-          text-align: center;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="app-bar">
-        <div class="logo">
-          <h1>CMS Admin</h1>
-        </div>
-        <nav class="nav-links">
-          <ul>
-            <li><a href="index.php">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Blog</a></li>
-          </ul>
-        </nav>
-      </div>
-      <main class="content">
-    <?php
-}
-function displayFooter() {
-    ?>
-      </main>
-      <footer class="footer" style="margin-top: 20px; text-align: center; padding: 10px; border-top: 1px solid #ddd;">
-        <p>&copy; 2025 CMS Admin System. All rights reserved.</p>
-      </footer>
-    </body>
-    </html>
-    <?php
+// Lataa tallennetut tiedot JSON-tiedostoista sessioon (jos ne ovat olemassa)
+$logoFile = 'data/logo.json';
+if (file_exists($logoFile)) {
+    $logoData = json_decode(file_get_contents($logoFile), true);
+    if ($logoData && isset($logoData['logoText'])) {
+        $_SESSION['logoText'] = $logoData['logoText'];
+    }
 }
 
-// Tarkista onko kyseessä edit_article.php vai edit_links.php
-$page = $_GET['page'] ?? '';
-
-// Hae alatunnisteen huomautus tiedostosta (jos sellainen on)
-$footerNotePath = 'data/footer_note.json';
-if (file_exists($footerNotePath)) {
-    $footerNote = json_decode(file_get_contents($footerNotePath), true);
-    $_SESSION['footerNote'] = $footerNote['text'] ?? "Lorem ipsum dolor sit amet";
+$footerFile = 'data/footer.json';
+if (file_exists($footerFile)) {
+    $footerData = json_decode(file_get_contents($footerFile), true);
+    if ($footerData) {
+        if (isset($footerData['footerTitle'])) {
+            $_SESSION['footerTitle'] = $footerData['footerTitle'];
+        }
+        if (isset($footerData['footerNote'])) {
+            $_SESSION['footerNote'] = $footerData['footerNote'];
+        }
+        if (isset($footerData['companyName'])) {
+            $_SESSION['companyName'] = $footerData['companyName'];
+        }
+    }
 }
 
 // Default settings if not already set
@@ -309,375 +317,8 @@ if (!isset($_SESSION['companyName'])) {
     $_SESSION['companyName'] = "Company's name";
 }
 
-// Käsittele edit_links.php toiminnot
-if ($page === 'edit_links' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['action'] ?? '';
-    
-    if ($action === 'add_link') {
-        // Näytä lomake uuden linkin lisäämiseen
-        displayHeader();
-        ?>
-        <div class="edit-form-container">
-            <h2>Lisää uusi linkki</h2>
-            <form method="post" action="index.php?page=edit_links">
-                <input type="hidden" name="action" value="save_new_link">
-                <div class="form-group">
-                    <label for="link_name">Linkin teksti:</label>
-                    <input type="text" id="link_name" name="link_name" placeholder="Esim. Facebook" required>
-                </div>
-                <div class="form-group">
-                    <label for="link_url">Linkin URL:</label>
-                    <input type="text" id="link_url" name="link_url" placeholder="Esim. https://facebook.com" required>
-                </div>
-                <div class="form-buttons">
-                    <button type="submit" class="save-button">Tallenna linkki</button>
-                    <a href="index.php" class="cancel-button">Peruuta</a>
-                </div>
-            </form>
-        </div>
-        <?php
-        displayFooter();
-        exit;
-    }
-    
-    else if ($action === 'save_new_link') {
-        // Tallenna uusi linkki tietokantaan
-        $displayText = $_POST['link_name'] ?? '';
-        $url = $_POST['link_url'] ?? '';
-        
-        if ($displayText && $url) {
-            // Käytä tietokantafunktiota linkin lisäämiseen
-            $result = addLink($displayText, $url);
-            
-            if ($result) {
-                // Ohjaa takaisin pääsivulle
-                header('Location: index.php');
-                exit;
-            } else {
-                echo "<script>alert('Linkin tallentaminen epäonnistui!'); history.back();</script>";
-                exit;
-            }
-        } else {
-            echo "<script>alert('Molemmat kentät vaaditaan!'); history.back();</script>";
-            exit;
-        }
-    }
-    
-    else if ($action === 'delete_link') {
-        // Poista linkki
-        $linkId = isset($_POST['link_id']) ? (int)$_POST['link_id'] : -1;
-        
-        if ($linkId > 0) {
-            // Hae linkin tiedot vahvistussivua varten
-            $links = getAllLinks();
-            $linkToDelete = null;
-            
-            foreach ($links as $link) {
-                if ($link['id'] == $linkId) {
-                    $linkToDelete = $link;
-                    break;
-                }
-            }
-            
-            if ($linkToDelete) {
-                // Näytä vahvistussivu
-                displayHeader();
-                ?>
-                <div class="confirmation-dialog">
-                    <h2>Vahvista poisto</h2>
-                    <p>Oletko varma, että haluat poistaa linkin "<?php echo htmlspecialchars($linkToDelete['display_text']); ?>"?</p>
-                    <form method="post" action="index.php?page=edit_links">
-                        <input type="hidden" name="link_id" value="<?php echo $linkId; ?>">
-                        <input type="hidden" name="action" value="confirm_delete_link">
-                        <div class="form-buttons">
-                            <button type="submit" class="delete-button">Kyllä, poista linkki</button>
-                            <a href="index.php" class="cancel-button">Peruuta</a>
-                        </div>
-                    </form>
-                </div>
-                <?php
-                displayFooter();
-                exit;
-            }
-        }
-    }
-    
-    else if ($action === 'confirm_delete_link') {
-        // Poista linkki vahvistuksen jälkeen
-        $linkId = isset($_POST['link_id']) ? (int)$_POST['link_id'] : -1;
-        
-        if ($linkId > 0) {
-            // Käytä tietokantafunktiota linkin poistamiseen
-            $result = deleteLink($linkId);
-            
-            // Ohjaa takaisin pääsivulle
-            header('Location: index.php');
-            exit;
-        }
-    }
-    
-    else if ($action === 'edit_link') {
-        // Muokkaa linkkiä
-        $linkId = isset($_POST['link_id']) ? (int)$_POST['link_id'] : -1;
-        
-        if ($linkId > 0) {
-            // Hae linkin tiedot
-            $links = getAllLinks();
-            $linkToEdit = null;
-            
-            foreach ($links as $link) {
-                if ($link['id'] == $linkId) {
-                    $linkToEdit = $link;
-                    break;
-                }
-            }
-            
-            if ($linkToEdit) {
-                // Näytä lomake linkin muokkaamiseen
-                displayHeader();
-                ?>
-                <div class="edit-form-container">
-                    <h2>Muokkaa linkkiä</h2>
-                    <form method="post" action="index.php?page=edit_links">
-                        <input type="hidden" name="link_id" value="<?php echo $linkId; ?>">
-                        <input type="hidden" name="action" value="save_edit_link">
-                        <div class="form-group">
-                            <label for="link_name">Linkin teksti:</label>
-                            <input type="text" id="link_name" name="link_name" value="<?php echo htmlspecialchars($linkToEdit['display_text']); ?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="link_url">Linkin URL:</label>
-                            <input type="text" id="link_url" name="link_url" value="<?php echo htmlspecialchars($linkToEdit['url']); ?>" required>
-                        </div>
-                        <div class="form-buttons">
-                            <button type="submit" class="save-button">Tallenna muutokset</button>
-                            <a href="index.php" class="cancel-button">Peruuta</a>
-                        </div>
-                    </form>
-                </div>
-                <?php
-                displayFooter();
-                exit;
-            }
-        }
-    }
-    
-    else if ($action === 'save_edit_link') {
-        // Tallenna muokattu linkki
-        $linkId = isset($_POST['link_id']) ? (int)$_POST['link_id'] : -1;
-        $displayText = $_POST['link_name'] ?? '';
-        $url = $_POST['link_url'] ?? '';
-        
-        if ($linkId > 0 && $displayText && $url) {
-            // Käytä tietokantafunktiota linkin päivittämiseen
-            $result = updateLink($linkId, $displayText, $url);
-            
-            // Ohjaa takaisin pääsivulle
-            header('Location: index.php');
-            exit;
-        } else {
-          if ($page === 'edit_article' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $action = $_POST['action'] ?? '';
-            $sectionId = isset($_POST['section_id']) ? (int)$_POST['section_id'] : -1;
-            echo "<script>alert('Molemmat kentät vaaditaan!'); history.back();</script>";
-            exit;
-        }
-    }
-    
-    // Ohjaa takaisin pääsivulle, jos toimintoa ei käsitelty
-    header('Location: index.php');
-    exit;
-}
-else if ($action === 'confirm_delete') {
-        // Poista artikkeli vahvistuksen jälkeen
-        if ($sectionId > 0) {
-            // Käytä tietokantafunktiota artikkelin poistamiseen
-            $result = deleteSection($sectionId);
-            
-            // Ohjaa takaisin pääsivulle
-            header('Location: index.php');
-            exit;
-        }
-    }
-    
-    else if ($action === 'add_article') {
-        // Näytä lomake uuden artikkelin lisäämiseen
-        displayHeader();
-        ?>
-        <div class="edit-form-container">
-            <h2>Lisää uusi artikkeli</h2>
-            <form method="post" action="index.php?page=edit_article" enctype="multipart/form-data">
-                <input type="hidden" name="action" value="save_new_article">
-                
-                <div class="form-group">
-                    <label for="title">Otsikko:</label>
-                    <input type="text" id="title" name="title" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="content">Sisältö:</label>
-                    <textarea id="content" name="content" style="width: 100%; height: 300px; padding: 10px;"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="upload-method">Kuvan lisääminen:</label>
-                    <select id="upload-method" name="upload_method" onchange="toggleUploadMethod()">
-                        <option value="path">Määritä polku</option>
-                        <option value="upload">Lataa uusi kuva</option>
-                    </select>
-                    
-                    <div id="path-input">
-                        <label for="image-src">Kuvan polku (esim. images/cat1.jpg):</label>
-                        <input type="text" id="image-src" name="image_src" value="images/default.jpg">
-                    </div>
-                    
-                    <div id="file-input" style="display: none;">
-                        <label for="image-file">Valitse kuvatiedosto:</label>
-                        <input type="file" id="image-file" name="image_file" accept="image/*">
-                    </div>
-                </div>
-                
-                <div class="form-buttons">
-                    <button type="submit" class="save-button">Tallenna artikkeli</button>
-                    <a href="index.php" class="cancel-button">Peruuta</a>
-                </div>
-            </form>
-        </div>
-        
-        <script>
-            function toggleUploadMethod() {
-                const method = document.getElementById('upload-method').value;
-                if (method === 'path') {
-                    document.getElementById('path-input').style.display = 'block';
-                    document.getElementById('file-input').style.display = 'none';
-                } else {
-                    document.getElementById('path-input').style.display = 'none';
-                    document.getElementById('file-input').style.display = 'block';
-                }
-            }
-        </script>
-        <?php
-        displayFooter();
-        exit;
-    }
-    
-    else if ($action === 'save_new_article') {
-        // Tallenna uusi artikkeli
-        $title = $_POST['title'] ?? '';
-        $content = $_POST['content'] ?? '';
-        
-        if ($title && trim($title) !== '') {
-            // Tarkista, onko kyseessä mallipohja
-            $template = checkArticleTemplate($title);
-            
-            if ($template) {
-                // Jos mallipohja tunnistettiin, käytä sen tietoja
-                $title = $template['title'];
-                $htmlContent = $template['content'];
-                $imageUrl = $template['image_url'];
-                
-                // Näytä viesti käyttäjälle
-                echo "<script>alert('" . addslashes($template['message']) . "');</script>";
-            } else {
-                // Muunna teksti HTML-muotoon
-                $paragraphs = explode("\n\n", $content);
-                $htmlContent = '';
-                
-                foreach ($paragraphs as $p) {
-                    $lines = explode("\n", $p);
-                    $htmlContent .= '<p>' . implode('<br>', $lines) . '</p>';
-                }
-                
-                // Käsittele kuva
-                $uploadMethod = $_POST['upload_method'] ?? 'path';
-                $imageUrl = '';
-                
-                if ($uploadMethod === 'path') {
-                    $imageUrl = $_POST['image_src'] ?? 'images/default.jpg';
-                } else {
-                    // Lataa tiedosto palvelimelle
-                    if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] === UPLOAD_ERR_OK) {
-                        $uploadDir = 'uploads/';
-                        
-                        // Varmista että hakemisto on olemassa
-                        if (!file_exists($uploadDir)) {
-                            mkdir($uploadDir, 0777, true);
-                        }
-                        
-                        $fileName = basename($_FILES['image_file']['name']);
-                        $targetFilePath = $uploadDir . $fileName;
-                        
-                        // Siirrä ladattu tiedosto hakemistoon
-                        if (move_uploaded_file($_FILES['image_file']['tmp_name'], $targetFilePath)) {
-                            $imageUrl = $targetFilePath;
-                        } else {
-                            $imageUrl = 'images/default.jpg';
-                        }
-                    } else {
-                        $imageUrl = 'images/default.jpg';
-                    }
-                }
-            }
-            
-            // Käytä tietokantafunktiota artikkelin lisäämiseen
-            $result = addSection($title, $htmlContent, $imageUrl);
-            
-            if ($result) {
-                // Ohjaa takaisin pääsivulle
-                header('Location: index.php');
-                exit;
-            } else {
-                echo "<script>alert('Artikkelin tallentaminen epäonnistui!'); history.back();</script>";
-                exit;
-            }
-        } else {
-            echo "<script>alert('Otsikko vaaditaan!'); history.back();</script>";
-            exit;
-        }
-    }
-    
-    // Ohjaa takaisin pääsivulle, jos toimintoa ei käsitelty
-    header('Location: index.php');
-    exit;
-}
-// Käsittele pääsivun lomakkeiden lähettäminen
-else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Logo edit
-    if (isset($_POST['edit_logo'])) {
-        $_SESSION['logoText'] = $_POST['logoText'];
-    }
-    
-    // Footer title edit
-    if (isset($_POST['edit_footer_title'])) {
-        $_SESSION['footerTitle'] = $_POST['footerTitle'];
-    }
-    
-    // Footer note edit
-    if (isset($_POST['edit_footer_note'])) {
-        $_SESSION['footerNote'] = $_POST['footerNote'];
-        
-        // Tallenna alatunnisteen huomautus JSON-tiedostoon
-        $footerNotePath = 'data/footer_note.json';
-        $footerNoteDir = dirname($footerNotePath);
-        
-        if (!file_exists($footerNoteDir)) {
-            mkdir($footerNoteDir, 0777, true);
-        }
-        
-        $data = ['text' => $_SESSION['footerNote']];
-        file_put_contents($footerNotePath, json_encode($data));
-    }
-    
-    // Company name edit
-    if (isset($_POST['edit_company_name'])) {
-        $_SESSION['companyName'] = $_POST['companyName'];
-    }
-    
-    // Redirect to prevent form resubmission
-    header('Location: ' . $_SERVER['PHP_SELF']);
-    exit;
-}
-// Näytä pääsivu, jos kyseessä ei ole edit_article tai edit_links
+// Varmista että JSON-tiedostot ovat synkronoituja
+syncToJsonFiles();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -744,6 +385,68 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         max-width: 100%;
       }
     }
+
+    /* Modal styles */
+    .edit-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .edit-modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 5px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .editor-actions {
+      margin-top: 15px;
+    }
+
+    .save-button, .cancel-button, .delete-button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    .save-button {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .cancel-button {
+      background-color: #f1f1f1;
+      color: #333;
+    }
+
+    .delete-button {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .link-row {
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .link-form {
+      background-color: #f9f9f9;
+    }
   </style>
 </head>
 <body>
@@ -751,16 +454,11 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <div class="app-bar">
     <div class="logo">
       <h1 class="editable" id="logoText"><?php echo htmlspecialchars($_SESSION['logoText']); ?></h1>
-      <form method="post" style="display: inline;">
-        <input type="hidden" name="edit_logo" value="1">
-        <input type="text" name="logoText" value="<?php echo htmlspecialchars($_SESSION['logoText']); ?>" style="display: none;" id="logoTextInput">
-        <button type="button" class="edit-button" onclick="toggleLogoEdit()">Edit</button>
-        <button type="submit" style="display: none;" id="logoSubmit">Save</button>
-      </form>
+      <button class="edit-button" onclick="editLogo()">Edit</button>
     </div>
     <nav class="nav-links">
       <ul>
-        <li><a href="index.php">Home</a></li>
+        <li><a href="indexs.php">Home</a></li>
         <li><a href="#">About</a></li>
         <li><a href="#">Blog</a></li>
       </ul>
@@ -768,28 +466,19 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
 
   <main class="articles" id="articlesContainer">
-    <!-- Articles will be loaded dynamically from database -->
+    <!-- Articles loaded from database -->
     <?php 
-    // Hae kaikki artikkelit tietokannasta
     $sections = getAllSections();
     foreach ($sections as $section): 
     ?>
       <section class="article" id="section-<?php echo $section['id']; ?>">
         <div class="article-text">
           <h2><?php echo htmlspecialchars($section['title']); ?></h2>
-          <form method="post" action="index.php?page=edit_article">
-            <input type="hidden" name="section_id" value="<?php echo $section['id']; ?>">
-            <input type="hidden" name="action" value="edit_title">
-            <button type="submit" class="edit-button">Edit Title</button>
-          </form>
+          <button class="edit-button" onclick="editArticleTitle(<?php echo $section['id']; ?>)">Edit Title</button>
           <div class="article-content">
-            <?php echo $section['content']; // Note: content should be sanitized before storing ?>
+            <?php echo $section['content']; ?>
           </div>
-          <form method="post" action="index.php?page=edit_article">
-            <input type="hidden" name="section_id" value="<?php echo $section['id']; ?>">
-            <input type="hidden" name="action" value="edit_content">
-            <button type="submit" class="edit-button edit-content-button">Edit Content</button>
-          </form>
+          <button class="edit-button edit-content-button" onclick="editArticleContent(<?php echo $section['id']; ?>)">Edit Content</button>
         </div>
         <div class="article-image align-center">
           <img 
@@ -798,19 +487,12 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             style="width: 200px; height: auto;"
           >
           <div class="image-buttons">
-            <form method="post" action="index.php?page=edit_article" style="display: inline;">
-              <input type="hidden" name="section_id" value="<?php echo $section['id']; ?>">
-              <input type="hidden" name="action" value="change_image">
-              <button type="submit" class="edit-button">Change Image</button>
-            </form>
+            <button class="edit-button" onclick="editArticleImage(<?php echo $section['id']; ?>)">Change Image</button>
+            <button class="edit-button" onclick="resizeArticleImage(<?php echo $section['id']; ?>)">Resize Image</button>
           </div>
         </div>
         <div class="article-actions">
-          <form method="post" action="index.php?page=edit_article">
-            <input type="hidden" name="section_id" value="<?php echo $section['id']; ?>">
-            <input type="hidden" name="action" value="delete_article">
-            <button type="submit" class="delete-button" onclick="return confirm('Are you sure you want to delete this article?');">Delete Article</button>
-          </form>
+          <button class="delete-button" onclick="deleteArticle(<?php echo $section['id']; ?>)">Delete Article</button>
         </div>
       </section>
     <?php endforeach; ?>
@@ -818,44 +500,25 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   
   <!-- Add New Article button moved to bottom -->
   <div class="footer-admin-tools">
-    <form method="post" action="index.php?page=edit_article">
-      <input type="hidden" name="action" value="add_article">
-      <button type="submit" class="add-button">+ Add New Article</button>
-    </form>
+    <button class="add-button" onclick="addNewArticle()">+ Add New Article</button>
   </div>
 
   <footer class="footer">
     <div class="footer-left">
         <h3 class="editable" id="footer-title"><?php echo htmlspecialchars($_SESSION['footerTitle']); ?></h3>
-        <form method="post" style="display: inline;">
-          <input type="hidden" name="edit_footer_title" value="1">
-          <input type="text" name="footerTitle" value="<?php echo htmlspecialchars($_SESSION['footerTitle']); ?>" style="display: none;" id="footerTitleInput">
-          <button type="button" class="edit-button" onclick="toggleFooterTitleEdit()">Edit</button>
-          <button type="submit" style="display: none;" id="footerTitleSubmit">Save</button>
-        </form>
-        
+        <button class="edit-button" onclick="editFooterTitle()">Edit</button>
         <p class="editable" id="footer-note"><?php echo htmlspecialchars($_SESSION['footerNote']); ?></p>
-        <form method="post" style="display: inline;">
-          <input type="hidden" name="edit_footer_note" value="1">
-          <textarea name="footerNote" style="display: none;" id="footerNoteInput"><?php echo htmlspecialchars($_SESSION['footerNote']); ?></textarea>
-          <button type="button" class="edit-button" onclick="toggleFooterNoteEdit()">Edit</button>
-          <button type="submit" style="display: none;" id="footerNoteSubmit">Save</button>
-        </form>
+        <button class="edit-button" onclick="editFooterNote()">Edit</button>
 
         <p>© 2025, <span id="companyName"><?php echo htmlspecialchars($_SESSION['companyName']); ?></span>.</p> 
-        <form method="post" style="display: inline;">
-          <input type="hidden" name="edit_company_name" value="1">
-          <input type="text" name="companyName" value="<?php echo htmlspecialchars($_SESSION['companyName']); ?>" style="display: none;" id="companyNameInput">
-          <button type="button" class="edit-button" onclick="toggleCompanyNameEdit()">Edit</button>
-          <button type="submit" style="display: none;" id="companyNameSubmit">Save</button>
-        </form>
+        <button class="edit-button" onclick="editCompanyName()">Edit</button>
         <br>
         <p>All rights reserved.</p>
     </div>
 
     <div class="footer-center">
         <ul class="footer-links">
-            <li><a href="index.php">Home</a></li>
+            <li><a href="indexs.php">Home</a></li>
             <li><a href="#">About</a></li>
             <li><a href="#">Blog</a></li>
         </ul>
@@ -863,83 +526,371 @@ else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="footer-right">
         <div id="linksContainer">
-            <!-- Social links from database -->
             <?php
-            // Hae linkit tietokannasta
             $links = getAllLinks();
-            foreach ($links as $link) {
-                echo '<div class="social-link">';
-                echo '<a href="' . htmlspecialchars($link['url']) . '" target="_blank">' . htmlspecialchars($link['display_text']) . '</a>';
-                echo '<form method="post" action="index.php?page=edit_links" style="display: inline;">';
-                echo '<input type="hidden" name="link_id" value="' . $link['id'] . '">';
-                echo '<input type="hidden" name="action" value="edit_link">';
-                echo '<button type="submit" class="edit-button small">Edit</button>';
-                echo '</form>';
-                echo '<form method="post" action="index.php?page=edit_links" style="display: inline;">';
-                echo '<input type="hidden" name="link_id" value="' . $link['id'] . '">';
-                echo '<input type="hidden" name="action" value="delete_link">';
-                echo '<button type="submit" class="delete-button small">X</button>';
-                echo '</form>';
-                echo '</div>';
+            if (empty($links)) {
+                echo '<p>No social media links. Add a link using the button below.</p>';
+            } else {
+                foreach ($links as $link) {
+                    echo '<div class="link-row">';
+                    echo '<a href="' . htmlspecialchars($link['url']) . '" target="_blank" style="color: blue;">' . htmlspecialchars($link['display_text']) . '</a> ';
+                    echo '<button class="edit-button" onclick="editLink(' . $link['id'] . ', \'' . htmlspecialchars($link['display_text'], ENT_QUOTES) . '\', \'' . htmlspecialchars($link['url'], ENT_QUOTES) . '\')">Edit</button>';
+                    echo '<button class="delete-button" onclick="confirmRemoveLink(' . $link['id'] . ', \'' . htmlspecialchars($link['display_text'], ENT_QUOTES) . '\')">Delete</button>';
+                    echo '</div>';
+                }
             }
             ?>
         </div>
-        <form method="post" action="index.php?page=edit_links">
-          <input type="hidden" name="action" value="add_link">
-          <button type="submit" class="add-button">Add New Link</button>
-        </form>
+        <button class="add-button" onclick="addLink()">Add New Link</button>
     </div>
   </footer>
 
   <script>
-    // Toggle editing functions for inline editing
-    function toggleLogoEdit() {
-      const logoText = document.getElementById('logoText');
-      const logoInput = document.getElementById('logoTextInput');
-      const logoSubmit = document.getElementById('logoSubmit');
-      const editButton = event.target;
-      
-      logoText.style.display = 'none';
-      logoInput.style.display = 'inline';
-      logoSubmit.style.display = 'inline';
-      editButton.style.display = 'none';
+    // AJAX helper function
+    function sendAjaxRequest(action, data, callback) {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'admin.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (callback) callback(response);
+                    if (response.redirect) {
+                        location.reload();
+                    }
+                } catch (e) {
+                    console.error('Failed to parse response:', e);
+                }
+            }
+        };
+        
+        let params = 'ajax_action=' + encodeURIComponent(action);
+        for (const key in data) {
+            params += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(data[key]);
+        }
+        
+        xhr.send(params);
     }
-    
-    function toggleFooterTitleEdit() {
+
+    // Logo editing function
+    function editLogo() {
+      const logo = document.getElementById('logoText');
+      const newLogoText = prompt("Edit logo text", logo.textContent);
+      if (newLogoText) {
+        sendAjaxRequest('edit_logo', { logoText: newLogoText }, function(response) {
+            if (response.success) {
+                logo.textContent = newLogoText;
+                alert('Logo updated! Changes will appear on the public page.');
+            }
+        });
+      }
+    }
+
+    // Footer editing functions
+    function editFooterTitle() {
       const footerTitle = document.getElementById('footer-title');
-      const footerTitleInput = document.getElementById('footerTitleInput');
-      const footerTitleSubmit = document.getElementById('footerTitleSubmit');
-      const editButton = event.target;
-      
-      footerTitle.style.display = 'none';
-      footerTitleInput.style.display = 'inline';
-      footerTitleSubmit.style.display = 'inline';
-      editButton.style.display = 'none';
+      const newFooterTitle = prompt("Edit footer title", footerTitle.textContent);
+      if (newFooterTitle) {
+        sendAjaxRequest('edit_footer_title', { footerTitle: newFooterTitle }, function(response) {
+            if (response.success) {
+                footerTitle.textContent = newFooterTitle;
+                alert('Footer title updated! Changes will appear on the public page.');
+            }
+        });
+      }
     }
-    
-    function toggleFooterNoteEdit() {
+
+    function editFooterNote() {
       const footerNote = document.getElementById('footer-note');
-      const footerNoteInput = document.getElementById('footerNoteInput');
-      const footerNoteSubmit = document.getElementById('footerNoteSubmit');
-      const editButton = event.target;
-      
-      footerNote.style.display = 'none';
-      footerNoteInput.style.display = 'block';
-      footerNoteSubmit.style.display = 'inline';
-      editButton.style.display = 'none';
+      const newFooterNote = prompt("Edit footer text", footerNote.textContent);
+      if (newFooterNote) {
+        sendAjaxRequest('edit_footer_note', { footerNote: newFooterNote }, function(response) {
+            if (response.success) {
+                footerNote.textContent = newFooterNote;
+                alert('Footer note updated! Changes will appear on the public page.');
+            }
+        });
+      }
     }
-    
-    function toggleCompanyNameEdit() {
+
+    function editCompanyName() {
       const companyName = document.getElementById('companyName');
-      const companyNameInput = document.getElementById('companyNameInput');
-      const companyNameSubmit = document.getElementById('companyNameSubmit');
-      const editButton = event.target;
-      
-      companyName.style.display = 'none';
-      companyNameInput.style.display = 'inline';
-      companyNameSubmit.style.display = 'inline';
-      editButton.style.display = 'none';
+      const newCompanyName = prompt("Edit company name", companyName.textContent);
+      if (newCompanyName) {
+        sendAjaxRequest('edit_company_name', { companyName: newCompanyName }, function(response) {
+            if (response.success) {
+                companyName.textContent = newCompanyName;
+                alert('Company name updated! Changes will appear on the public page.');
+            }
+        });
+      }
     }
+
+    // Article management functions
+    function editArticleTitle(sectionId) {
+        const titleElement = document.querySelector('#section-' + sectionId + ' h2');
+        const newTitle = prompt("Edit article title", titleElement.textContent);
+        
+        if (newTitle && newTitle.trim() !== '') {
+            sendAjaxRequest('edit_article_title', { 
+                section_id: sectionId, 
+                title: newTitle 
+            }, function(response) {
+                if (response.success) {
+                    titleElement.textContent = newTitle;
+                    alert('Title updated! Changes will appear on the public page.');
+                } else {
+                    alert('Failed to update title: ' + response.message);
+                }
+            });
+        }
+    }
+
+    function editArticleContent(sectionId) {
+        // Create modal for content editing
+        const modal = document.createElement('div');
+        modal.className = 'edit-modal';
+        
+        const contentElement = document.querySelector('#section-' + sectionId + ' .article-content');
+        const currentContent = contentElement.innerHTML
+            .replace(/<br>/g, '\n')
+            .replace(/<\/p><p>/g, '\n\n')
+            .replace(/<[^>]*>/g, '')
+            .trim();
+            
+        modal.innerHTML = `
+            <div class="edit-modal-content">
+                <h3>Edit Article Content</h3>
+                <textarea id="content-editor" style="width: 100%; height: 300px; padding: 10px;">${currentContent}</textarea>
+                <div class="editor-actions">
+                    <button class="save-button" onclick="saveArticleContent(${sectionId})">Save Changes</button>
+                    <button class="cancel-button" onclick="closeModal()">Cancel</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        window.currentModal = modal;
+    }
+
+    function saveArticleContent(sectionId) {
+        const textarea = document.getElementById('content-editor');
+        const newContent = textarea.value;
+        
+        if (newContent && newContent.trim() !== '') {
+            // Convert plain text to HTML paragraphs
+            const paragraphs = newContent.split('\n\n');
+            const htmlContent = paragraphs.map(p => {
+                const lines = p.split('\n');
+                return '<p>' + lines.join('<br>') + '</p>';
+            }).join('');
+            
+            sendAjaxRequest('edit_article_content', { 
+                section_id: sectionId, 
+                content: htmlContent 
+            }, function(response) {
+                if (response.success) {
+                    const contentElement = document.querySelector('#section-' + sectionId + ' .article-content');
+                    contentElement.innerHTML = htmlContent;
+                    closeModal();
+                    alert('Content updated! Changes will appear on the public page.');
+                } else {
+                    alert('Failed to update content: ' + response.message);
+                }
+            });
+        }
+    }
+
+    function closeModal() {
+        if (window.currentModal) {
+            window.currentModal.remove();
+            window.currentModal = null;
+        }
+    }
+
+    function editArticleImage(sectionId) {
+        const imgElement = document.querySelector('#section-' + sectionId + ' img');
+        const currentSrc = imgElement.src.split('/').pop(); // Get filename only
+        const newSrc = prompt("Enter image path (e.g., images/cat1.jpg)", "images/" + currentSrc);
+        
+        if (newSrc && newSrc.trim() !== '') {
+            sendAjaxRequest('edit_article_image', { 
+                section_id: sectionId, 
+                image_url: newSrc 
+            }, function(response) {
+                if (response.success) {
+                    imgElement.src = newSrc;
+                    alert('Image updated! Changes will appear on the public page.');
+                } else {
+                    alert('Failed to update image: ' + response.message);
+                }
+            });
+        }
+    }
+
+    function resizeArticleImage(sectionId) {
+        const imgElement = document.querySelector('#section-' + sectionId + ' img');
+        const currentWidth = imgElement.style.width.replace('px', '') || '200';
+        const newWidth = prompt("Enter image width in pixels", currentWidth);
+        
+        if (newWidth && parseInt(newWidth) > 0) {
+            imgElement.style.width = newWidth + 'px';
+            // Note: This only changes display, not saved data for now
+        }
+    }
+
+    function deleteArticle(sectionId) {
+        if (confirm("Are you sure you want to delete this article?")) {
+            sendAjaxRequest('delete_article', { section_id: sectionId }, function(response) {
+                if (response.success) {
+                    document.getElementById('section-' + sectionId).remove();
+                    alert('Article deleted! Changes will appear on the public page.');
+                } else {
+                    alert('Failed to delete article: ' + response.message);
+                }
+            });
+        }
+    }
+
+    function addNewArticle() {
+        const newTitle = prompt("Enter new article title", "New Article Title");
+        
+        if (!newTitle || newTitle.trim() === '') {
+            return;
+        }
+        
+        sendAjaxRequest('add_article', { 
+            title: newTitle.trim(),
+            content: '<p>Enter your article content here.</p>',
+            image_url: 'images/placeholder.jpg'
+        }, function(response) {
+            if (response.success) {
+                alert('Article added! Refreshing page to show changes...');
+                location.reload(); // Reload to show new article
+            } else {
+                alert('Failed to add article: ' + response.message);
+            }
+        });
+    }
+
+    // Social media link management functions
+    function addLink() {
+        const modal = document.createElement('div');
+        modal.className = 'edit-modal';
+        modal.innerHTML = `
+            <div class="edit-modal-content">
+                <h4>Add New Link</h4>
+                <div style="margin-bottom: 10px;">
+                    <label for="newLinkText" style="display: block; margin-bottom: 5px;">Link Text:</label>
+                    <input type="text" id="newLinkText" placeholder="e.g. Facebook" style="width: 100%; padding: 5px;">
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <label for="newLinkUrl" style="display: block; margin-bottom: 5px;">Link URL:</label>
+                    <input type="text" id="newLinkUrl" placeholder="e.g. https://facebook.com" style="width: 100%; padding: 5px;">
+                </div>
+                <div class="editor-actions">
+                    <button class="save-button" onclick="saveNewLink()">Save</button>
+                    <button class="cancel-button" onclick="closeModal()">Cancel</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        window.currentModal = modal;
+    }
+
+    function saveNewLink() {
+        const linkText = document.getElementById('newLinkText').value;
+        const linkUrl = document.getElementById('newLinkUrl').value;
+        
+        if (linkText && linkUrl) {
+            sendAjaxRequest('add_link', { 
+                link_text: linkText, 
+                link_url: linkUrl 
+            }, function(response) {
+                if (response.success) {
+                    closeModal();
+                    alert('Link added! Changes will appear on the public page.');
+                    location.reload();
+                } else {
+                    alert('Failed to add link: ' + response.message);
+                }
+            });
+        } else {
+            alert("Both fields are required!");
+        }
+    }
+
+    function editLink(linkId, currentText, currentUrl) {
+        const modal = document.createElement('div');
+        modal.className = 'edit-modal';
+        modal.innerHTML = `
+            <div class="edit-modal-content">
+                <h4>Edit Link</h4>
+                <div style="margin-bottom: 10px;">
+                    <label for="editLinkText" style="display: block; margin-bottom: 5px;">Link Text:</label>
+                    <input type="text" id="editLinkText" value="${currentText}" style="width: 100%; padding: 5px;">
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <label for="editLinkUrl" style="display: block; margin-bottom: 5px;">Link URL:</label>
+                    <input type="text" id="editLinkUrl" value="${currentUrl}" style="width: 100%; padding: 5px;">
+                </div>
+                <div class="editor-actions">
+                    <button class="save-button" onclick="saveEditLink(${linkId})">Save Changes</button>
+                    <button class="cancel-button" onclick="closeModal()">Cancel</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        window.currentModal = modal;
+    }
+
+    function saveEditLink(linkId) {
+        const linkText = document.getElementById('editLinkText').value;
+        const linkUrl = document.getElementById('editLinkUrl').value;
+        
+        if (linkText && linkUrl) {
+            sendAjaxRequest('edit_link', { 
+                link_id: linkId,
+                link_text: linkText, 
+                link_url: linkUrl 
+            }, function(response) {
+                if (response.success) {
+                    closeModal();
+                    alert('Link updated! Changes will appear on the public page.');
+                    location.reload();
+                } else {
+                    alert('Failed to update link: ' + response.message);
+                }
+            });
+        } else {
+            alert("Both fields are required!");
+        }
+    }
+
+    function confirmRemoveLink(linkId, linkText) {
+        if (confirm(`Are you sure you want to delete the link "${linkText}"?`)) {
+            sendAjaxRequest('delete_link', { link_id: linkId }, function(response) {
+                if (response.success) {
+                    alert('Link deleted! Changes will appear on the public page.');
+                    location.reload();
+                } else {
+                    alert('Failed to delete link: ' + response.message);
+                }
+            });
+        }
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(event) {
+        if (event.target.classList.contains('edit-modal')) {
+            closeModal();
+        }
+    });
   </script>
+
 </body>
 </html>
