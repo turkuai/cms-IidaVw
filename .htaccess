@@ -1,3 +1,0 @@
-RedirectMatch 404 /.env
-
-ErrorDocument 404 /demo/404.html
