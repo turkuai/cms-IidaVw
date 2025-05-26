@@ -1,4 +1,4 @@
-on: 
+on:
   push:
     branches: [ server ]
 name: 🚀 Deploy to School FTP Server
@@ -19,5 +19,11 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./
-        server-dir: /
+        server-dir: /cms/
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          .env
+          README.md
         log-level: verbose
