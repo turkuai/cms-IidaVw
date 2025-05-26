@@ -1,25 +1,35 @@
 {
     "articles": [
         {
-            "id": "article1",
-            "title": "Tule tapaamaan Sunnya \u2013 Iloinen kultainen s\u00e4de!",
-            "content": "<p>\r\n              <strong>Nimi:<\/strong> Sunny<br>\r\n              <strong>Rotu:<\/strong> Kultainen noutaja<br>\r\n              <strong>V\u00e4ri:<\/strong> Kultainen<br>\r\n              <strong>Ik\u00e4:<\/strong> 4 kuukautta<br>\r\n              <strong>Sukupuoli:<\/strong> Naaras\r\n            <\/p>\r\n            <p>\r\n              Sunny on leikkis\u00e4 ja hell\u00e4 kultainennoutaja-pentu, jolla on syd\u00e4n t\u00e4ynn\u00e4 rakkautta ja loputonta pentutarmoa. \r\n              H\u00e4n rakastaa pallojen jahtaamista, uusien yst\u00e4vien tapaamista ja leikkimisen j\u00e4lkeen p\u00e4iv\u00e4unille k\u00e4pertymist\u00e4.\r\n            <\/p>\r\n            <p>\r\n              Pehme\u00e4ll\u00e4 kultaisella turkillaan ja suloisilla silmill\u00e4\u00e4n h\u00e4n varastaa syd\u00e4mesi sekunneissa! Sunny on hyvin \r\n              sosiaalinen, innokas oppimaan ja vastaa hyvin positiiviseen koulutukseen.\r\n            <\/p>\r\n            <p>\r\n              H\u00e4n tulee hyvin toimeen lasten ja muiden koirien kanssa, ja kukoistaisi aktiivisessa kodissa, jossa h\u00e4n voi \r\n              tutkia, leikki\u00e4 ja kasvaa lojaaliseksi kumppaniksi, joksi h\u00e4net on tarkoitettu.\r\n            <\/p>\r\n            <p>\r\n              Sunnyn rokotukset ovat ajan tasalla ja h\u00e4n oppii nopeasti sis\u00e4siistiksi.\r\n            <\/p>\r\n            <p>\r\n              \ud83d\udc49 Luuletko, ett\u00e4 Sunny voisi olla t\u00e4ydellinen kumppanisi? Hae nyt adoptiota ja anna h\u00e4nelle rakastava koti jonka h\u00e4n ansaitsee!\r\n            <\/p>",
+            "id": "section-2",
+            "title": "Meet Sunny \u2013 A Golden Ray of Joy!",
+            "content": "<p>\r\n                  <strong>Name:<\/strong> Sunny<br>\r\n                  <strong>Breed:<\/strong> Golden Retriever<br>\r\n                  <strong>Color:<\/strong> Golden<br>\r\n                  <strong>Age:<\/strong> 4 months<br>\r\n                  <strong>Gender:<\/strong> Female\r\n                <\/p>\r\n                <p>\r\n                  Sunny is a playful and affectionate Golden Retriever puppy with a heart full of love and endless puppy energy. \r\n                  She loves chasing balls, making new friends, and cuddling up for naps after playtime.\r\n                <\/p>\r\n                <p>\r\n                  With her soft golden fur and sweet eyes, she'll steal your heart in seconds! Sunny is very social, eager to learn, \r\n                  and responds well to positive training.\r\n                <\/p>\r\n                <p>\r\n                  She's great with kids, other dogs, and would thrive in an active home where she can explore, play, and grow into \r\n                  the loyal companion she's meant to be.\r\n                <\/p>\r\n                <p>\r\n                  Sunny is up to date on her vaccinations and is learning fast with house training.\r\n                <\/p>\r\n                <p>\r\n                  ???? Think Sunny might be your perfect match? Apply now to adopt and give her the loving home she deserves!\r\n                <\/p>",
             "imageSrc": "images\/dog1.jpg",
-            "imageAlt": "S\u00f6p\u00f6 koira",
+            "imageAlt": "Article image",
             "imageWidth": 200,
             "imageHeight": "auto",
             "imageAlignment": "center"
         },
         {
-            "id": "article2",
-            "title": "Tapaa Pumpkin \u2013 Tuleva karvainen yst\u00e4v\u00e4si!",
-            "content": "<p>\r\n              <strong>Nimi:<\/strong> Pumpkin<br>\r\n              <strong>Rotu:<\/strong> Pitk\u00e4karvainen kotikissa<br>\r\n              <strong>V\u00e4ri:<\/strong> Oranssi<br>\r\n              <strong>Ik\u00e4:<\/strong> 3 vuotta<br>\r\n              <strong>Sukupuoli:<\/strong> Uros\r\n            <\/p>\r\n            <p>\r\n              Pumpkin on suloinen ja utelias oranssi kissa, jolla on silmiinpist\u00e4v\u00e4t vihre\u00e4t silm\u00e4t ja p\u00f6rr\u00f6inen turkki. \r\n              H\u00e4n rakastaa pehmeill\u00e4 matoilla loikoilua ja ymp\u00e4r\u00f6iv\u00e4n maailman hiljaista tarkkailua.\r\n            <\/p>\r\n            <p>\r\n              Pumpkinilla on lempe\u00e4 persoonallisuus, ja h\u00e4n nauttii sek\u00e4 rauhallisesta haliajasta ett\u00e4 lelujen mets\u00e4st\u00e4misest\u00e4.\r\n            <\/p>\r\n            <p>\r\n              H\u00e4n tulee hyvin toimeen ihmisten kanssa ja olisi t\u00e4ydellinen kumppani rauhalliseen kotiin, jossa h\u00e4n voi tuntea olonsa turvalliseksi ja rakastetuksi.\r\n            <\/p>\r\n            <p>\r\n              Pumpkin on kastroitu, rokotettu ja sis\u00e4siisti - valmiina liittym\u00e4\u00e4n ikuiseen perheeseens\u00e4!\r\n            <\/p>\r\n            <p>\r\n              \ud83d\udc49 Oletko valmis adoptoimaan Pumpkinin? T\u00e4yt\u00e4 hakemus verkkosivuillamme ja anna t\u00e4lle rakastettavalle kissalle koti, jonka h\u00e4n ansaitsee.\r\n            <\/p>",
+            "id": "section-4",
+            "title": "Meet Pumpkin \u2013 Your Future Furry Friend!",
+            "content": "<p>\r\n                  <strong>Name:<\/strong> Pumpkin<br>\r\n                  <strong>Breed:<\/strong> Domestic Longhair<br>\r\n                  <strong>Color:<\/strong> Orange<br>\r\n                  <strong>Age:<\/strong> 3 years<br>\r\n                  <strong>Gender:<\/strong> Male\r\n                <\/p>\r\n                <p>\r\n                  Pumpkin is a sweet and curious orange cat with striking green eyes and a fluffy coat. \r\n                  He loves to lounge on soft rugs and quietly observe the world around him.\r\n                <\/p>\r\n                <p>\r\n                  Pumpkin has a gentle personality and enjoys both quiet cuddle time and playful pouncing with his toys.\r\n                <\/p>\r\n                <p>\r\n                  He gets along well with people and would be a perfect match for a calm home where he can feel safe and loved.\r\n                <\/p>\r\n                <p>\r\n                  Pumpkin is neutered, vaccinated, and litter trained\u2014ready to join his forever family!\r\n                <\/p>\r\n                <p>\r\n                  ???? Ready to adopt Pumpkin? Fill out an application on our website and give this lovable cat the home he deserves.\r\n                <\/p>",
             "imageSrc": "images\/cat1.jpg",
-            "imageAlt": "S\u00f6p\u00f6 kissa",
+            "imageAlt": "Article image",
+            "imageWidth": 200,
+            "imageHeight": "auto",
+            "imageAlignment": "center"
+        },
+        {
+            "id": "section-5",
+            "title": "holaaa",
+            "content": "<p>Enter your article content here.<\/p>",
+            "imageSrc": "images\/placeholder.jpg",
+            "imageAlt": "Article image",
             "imageWidth": 200,
             "imageHeight": "auto",
             "imageAlignment": "center"
         }
     ],
-    "lastUpdated": "2025-05-19 12:26:05"
+    "lastUpdated": "2025-05-26 10:20:57"
 }
