@@ -20,6 +20,20 @@ function getAllLinks() {
     return $links;
 }
 
+function getLinkById($id) {
+    global $conn;
+    
+    $id = (int)$id;
+    $sql = "SELECT * FROM links WHERE id=$id";
+    $result = $conn->query($sql);
+    
+    if ($result && $result->num_rows > 0) {
+        return $result->fetch_assoc();
+    }
+    
+    return null;
+}
+
 function addLink($displayText, $url) {
     global $conn;
     
@@ -72,6 +86,20 @@ function getAllSections() {
     return $sections;
 }
 
+function getSectionById($id) {
+    global $conn;
+    
+    $id = (int)$id;
+    $sql = "SELECT * FROM sections WHERE id=$id";
+    $result = $conn->query($sql);
+    
+    if ($result && $result->num_rows > 0) {
+        return $result->fetch_assoc();
+    }
+    
+    return null;
+}
+
 function addSection($title, $content, $imageUrl = null) {
     global $conn;
     
@@ -97,6 +125,39 @@ function updateSection($id, $title, $content, $imageUrl = null) {
     $imageUrl = $imageUrl ? $conn->real_escape_string($imageUrl) : null;
     
     $sql = "UPDATE sections SET title='$title', content='$content', image_url=" . ($imageUrl ? "'$imageUrl'" : "NULL") . " WHERE id=$id";
+    
+    return $conn->query($sql) === TRUE;
+}
+
+function updateSectionTitle($id, $title) {
+    global $conn;
+    
+    $id = (int)$id;
+    $title = $conn->real_escape_string($title);
+    
+    $sql = "UPDATE sections SET title='$title' WHERE id=$id";
+    
+    return $conn->query($sql) === TRUE;
+}
+
+function updateSectionContent($id, $content) {
+    global $conn;
+    
+    $id = (int)$id;
+    $content = $conn->real_escape_string($content);
+    
+    $sql = "UPDATE sections SET content='$content' WHERE id=$id";
+    
+    return $conn->query($sql) === TRUE;
+}
+
+function updateSectionImage($id, $imageUrl) {
+    global $conn;
+    
+    $id = (int)$id;
+    $imageUrl = $conn->real_escape_string($imageUrl);
+    
+    $sql = "UPDATE sections SET image_url='$imageUrl' WHERE id=$id";
     
     return $conn->query($sql) === TRUE;
 }
