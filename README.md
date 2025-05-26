@@ -3,7 +3,7 @@ Tämä projekti on yksinkertaisen sisällönhallintajärjestelmän (CMS) toteutu
 
 **Julkiset linkit**
 * Netlify: https://cms-iidavw.netlify.app/
-* Koulun palvelin: http://taikukkula.fi/~23p_9468/cms/
+* Koulun palvelin: http://taikukkula.fi/tiev23p/iida/indexs.php
 
 **Projektin kuvaus**
 CMS-järjestelmämme tarjoaa käyttäjäystävällisen käyttöliittymän verkkosivustojen hallintaan. Käyttäjät voivat muokata sivuston sisältöä ilman teknistä osaamista.
